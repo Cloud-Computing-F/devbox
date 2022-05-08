@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Django File Upload / Download</title>
+    <style>
+        * {
+            font-family: "Roboto";
+        }
+
+        body {
+            background-color: #F5F5F5;
+        }
+
+        form {
+            background-color: #FFFFFF;
+            padding: 25px;
+        }
+
+        table {
+            width: 100%;
+            text-align: center;
+            margin-top: 25px;
+            padding: 25px;
+            background-color: #FFFFFF;
+        }
+
+        table tr td {
+            padding-top: 15px;
+        }
+    </style>
+</head>
+
+<body>
+    <form action="{% url 'devbox:uploadFile' %}" method="POST" enctype="multipart/form-data">
+        <input type="file" name="uploadedFile">
+        {% csrf_token %}
+        <input type="submit" value="Upload">
+    </form>
+
+    <form action="{% url 'devbox:downloadFile'  %}" method="post">
+        <table>
+            <tr>
+                <th>check</th>
+                <th>ID</th>
+                <th>Title</th>
+                <th>File Path</th>
+                <th>Upload Date & Time</th>
+            </tr>
+            {% for file in files %}
+                <tr>
+                    <td>
+                        <label>
+                            <input type="checkbox" name="selected" value="{{ file.get_filename }}">
+                        </label>
+                    </td>
+                        <td>{{ file.id }}</td>
+                        <td>{{ file.fileName }}</td>
+                        <td>{{ file.uploadedFile.url }}</td>
+                        <td>{{ file.dateTimeOfUpload }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+        <div>
+            <button type="submit">다운로드</button>
+        </div>
+    </form>
+</body>
+</html>
