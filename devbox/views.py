@@ -3,54 +3,187 @@ import zipfile
 from io import BytesIO
 from datetime import datetime
 from . import models
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import FileResponse, HttpResponse
 from django.core.files.storage import FileSystemStorage
 from django.views.decorators.csrf import csrf_exempt
 
 
-def uploadFile(request):
-    if request.method == "POST":
-        # Fetching the form data
-        uploadedFile = request.FILES["uploadedFile"]
-
-        # Saving the information in the database
-        document = models.Files(
-            uploadedFile=uploadedFile,
-            fileName=uploadedFile.name,
-        )
-        document.save()
-
-    documents = models.Files.objects.all()
-
-    return render(request, "devbox/upload-file.html", context={
-        "files": documents,
+# display file / folder
+def display_file_and_folder(request, pk):
+    files = models.Files.objects.filter(parent_id=pk if pk != 0 else None)
+    folders = models.Folder.objects.filter(parent_id=pk if pk != 0 else None)
+    return render(request, "devbox/main.html", context={
+        "current_folder_id": pk,
+        "files": files,
+        "folders": folders,
     })
 
 
-@csrf_exempt
-def downloadFile(request):
-    if request.method == "POST":
-        selected = request.POST.getlist("selected")
+# home directory
+def home(request):
+    return display_file_and_folder(request, 0)
 
+
+# change directory
+def change_directory(request, pk):
+    return display_file_and_folder(request, pk)
+
+
+# 파일 업로드
+def uploadFile(request, pk):
+    if request.method == "POST":
+        selected = request.FILES.getlist("uploadFile")
+        
+        if len(selected) >= 1:
+            for uploadedFile in request.FILES.getlist("uploadFile"):
+                duplicated_file = models.Files.objects.filter(fileName=uploadedFile.name, parent_id=pk if pk != 0 else None)
+                
+                # 파일 업로드
+                if len(duplicated_file) == 0:
+                    file = models.Files(
+                        uploadedFile=uploadedFile,
+                        fileName=uploadedFile.name,
+                        fileSize=uploadedFile.size,
+                        parent_id=pk if pk != 0 else None,
+                    )
+
+                    file.save()
+                # 중복된 파일 예외 처리
+                elif len(duplicated_file) >= 1:
+                    print("중복된 폴더 존재")
+
+        # 업로드 할 파일이 선택되지 않는 경우 예외 처리
+        elif len(selected) < 1:
+            print("업로드할 파일을 선택해 주세요")
+
+    # 파일 및 폴더 display
+    return redirect("devbox:changeDirectory", pk)
+
+
+# 파일 다운로드
+@csrf_exempt
+def downloadFile(request, pk):
+    if request.method == "POST":
+        selected = request.POST.getlist("selected_file")
+
+        # 파일 다중 선택 zip file로 다운로드
         if len(selected) > 1:
             zip_name = datetime.now()
             zip_name = zip_name.strftime("%Y%m%d%H%M%S")
+
             byte_data = BytesIO()
             with zipfile.ZipFile(byte_data, 'w', compression=zipfile.ZIP_DEFLATED) as myzip:
-                for file in selected:
-                    myzip.write(f"media/UploadedFiles/{file}", file)
+                for file_id in selected:
+                    file = models.Files.objects.get(id=file_id)
+                    file_path = os.path.basename(f"media/{file.uploadedFile}")
+                    myzip.write(f"media/UploadedFiles/{file_path}", file.fileName)
 
             response = HttpResponse(byte_data.getvalue(), content_type="application/force-download")
             response['Content-Disposition'] = f'attachment; filename={zip_name}.zip'
             response['Content-Length'] = byte_data.tell()
+            return response
 
-        else:
+        # 파일 단일 선택 원본 파일 다운로드
+        elif len(selected) == 1:
+            file = models.Files.objects.get(id=selected[0])
+            file_path = os.path.basename(f"media/{file.uploadedFile}")
             file_system = FileSystemStorage(os.path.abspath("media/UploadedFiles/"))
-            file_name = os.path.basename(f"media/UploadedFiles/{selected[0]}")
-            response = FileResponse(file_system.open(file_name),
-                                    content_type='application/force-download')
-            response['Content-Disposition'] = f'attachment; filename="{file_name}"'
 
-    return response
+            response = FileResponse(file_system.open(file_path), content_type='application/force-download')
+            response['Content-Disposition'] = f'attachment; filename="{file.fileName}"'
+            return response
+        
+        # 파일 선택 안함 예외 처리
+        elif len(selected) < 1:
+            print("다운로드할 파일을 선택해 주세요")
+            return redirect("devbox:changeDirectory", pk)
 
+
+# 폴더 생성
+def createFolder(request, pk):
+    if request.method == "POST":
+        folderName = request.POST.get("createFolderName")
+        
+        if len(folderName) != 0:
+            duplicated_folder = models.Folder.objects.filter(folderName=folderName, parent_id=pk if pk != 0 else None)
+    
+            # 폴더 생성
+            if len(duplicated_folder) == 0:
+                folder = models.Folder(
+                    folderName=folderName,
+                    parent_id=pk if pk != 0 else None,
+                )
+                folder.save()
+            
+            # 중복된 폴더 예외 처리
+            elif len(duplicated_folder) >= 1:
+                print("중복된 폴더 존재")           
+        
+        # 이름 입력 안함 예외 처리
+        elif len(folderName) == 0:
+            print("이름을 입력해 주세요")
+
+    return redirect("devbox:changeDirectory", pk)
+
+
+# 파일 및 폴더 삭제
+@csrf_exempt
+def deleteFileAndFolder(request, pk):
+    if request.method == "POST":
+        selected_folder = request.POST.getlist("selected_folder")
+        selected_file = request.POST.getlist("selected_file")
+
+        # 파일 및 폴더 선택 안함 예외 처리
+        if len(selected_file) == 0 and len(selected_folder) == 0:
+            print("삭제할 파일을 선택해 주세요")
+
+        # 삭제
+        else:
+            # 선택한 파일 삭제
+            if len(selected_file) >= 1:
+                for file_id in selected_file:
+                    file = models.Files.objects.get(id=file_id)
+                    file.delete()
+
+            # 선택한 폴더 삭제
+            if len(selected_folder) >= 1:
+                for folder_id in selected_folder:
+                    folder = models.Folder.objects.get(id=folder_id)
+                    folder.delete()
+
+    return redirect("devbox:changeDirectory", pk)
+
+
+# 파일 및 폴더 이름 수정
+def renameFileAndFolder(request, pk):
+    if request.method == "POST":
+        selected_folder = request.POST.getlist("selected_folder")
+        selected_file = request.POST.getlist("selected_file")
+        rename = request.POST.get("renameFileAndFolderName")
+
+        # 파일 및 폴더 선택 안함 예외 처리
+        if len(selected_file) == 0 and len(selected_folder) == 0:
+            print("이름을 변경할 파일을 선택해 주세요")
+
+        # 이름 입력 안함 예외 처리
+        elif len(rename) == 0:
+            print("수정할 이름을 입력해 주세요")
+
+        # 이름 수정
+        else:
+            # 선택한 파일 이름 수정
+            if len(selected_file) >= 1:
+                for file_id in selected_file:
+                    file = models.Files.objects.get(id=file_id)
+                    file.fileName = rename
+                    file.save()
+
+            # 선택한 폴더 이름 수정
+            if len(selected_folder) >= 1:
+                for folder_id in selected_folder:
+                    folder = models.Folder.objects.get(id=folder_id)
+                    folder.folderName = rename
+                    folder.save()
+
+    return redirect("devbox:changeDirectory", pk)
