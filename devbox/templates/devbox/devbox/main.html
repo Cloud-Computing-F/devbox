@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevBox</title>
+    <style>
+        * {
+            font-family: "Roboto";
+        }
+
+        body {
+            background-color: #F5F5F5;
+        }
+
+        form {
+            background-color: #FFFFFF;
+            padding: 25px;
+        }
+
+        table {
+            width: 100%;
+            text-align: center;
+            margin-top: 25px;
+            padding: 25px;
+            background-color: #FFFFFF;
+        }
+
+        table tr td {
+            padding-top: 15px;
+        }
+    </style>
+</head>
+
+<body>
+    <form action="{% url 'devbox:uploadFile' current_folder_id %}" method="POST" enctype="multipart/form-data">
+        <label for="uploadFile"> 파일 업로드
+            <input type="file" id="uploadFile" name="uploadFile" multiple>
+            {% csrf_token %}
+            <input type="submit" value="UploadFile">
+        </label>
+    </form>
+
+    <form action="{% url 'devbox:createFolder' current_folder_id %}" method="POST">
+        <label for="createFolder"> 폴더 생성
+            <input type="text" id="createFolder" name="createFolderName">
+            {% csrf_token %}
+            <input type="submit" value="CreateFolder">
+        </label>
+    </form>
+
+    <form method="POST">
+        <div>
+            <input type="submit" value="다운로드" formaction="{% url 'devbox:downloadFile' current_folder_id %}"/>
+            <input type="submit" value="삭제" formaction="{% url 'devbox:deleteFileAndFolder' current_folder_id %}"/>
+        </div>
+
+        <div>
+            <label for="renameFileandFolder">
+                <input type="text" id="renameFileandFolder" name="renameFileAndFolderName">
+                {% csrf_token%}
+                <input type="submit" value="수정" formaction="{% url 'devbox:renameFileAndFolder' current_folder_id %}"/>
+            </label>
+        </div>
+
+        <table>
+            <tr>
+                <th>check</th>
+                <th>ID</th>
+                <th>Title</th>
+                <th>File Path</th>
+                <th>File Size</th>
+                <th>Upload Date & Time</th>
+            </tr>
+
+            {% for folder in folders %}
+            <tr>
+                <td><label><input type="checkbox" name="selected_folder" value="{{ folder.id }}"></label></td>
+                <td>{{ folder.id }}</td>
+                <td><a href="{% url 'devbox:changeDirectory' folder.id %}">{{ folder.get_foldername }}</a></td>
+                <td>/{{ folder.id }}/</td>
+                <td></td>
+                <td>{{ folder.dateTimeOfUpload }}</td>
+            </tr>
+            {% endfor %}
+
+            {% for file in files %}
+            <tr>
+                <td><label><input type="checkbox" name="selected_file" value="{{ file.id }}"></label></td>
+                <td>{{ file.id }}</td>
+                <td>{{ file.fileName }}</td>
+                <td>{{ file.uploadedFile.url }}</td>
+                <td>{{ file.fileSize|filesizeformat }}</td>
+                <td>{{ file.dateTimeOfUpload }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </form>
+</body>
+
+</html>
