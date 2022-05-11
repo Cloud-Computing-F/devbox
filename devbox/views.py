@@ -49,7 +49,8 @@ def uploadFile(request, pk):
                     )
 
                     file.save()
-                # 중복된 파일 예외 처리
+
+                # 같은 폴더에 이름 중복된 파일 예외 처리
                 elif len(duplicated_file) >= 1:
                     print("중복된 폴더 존재")
 
@@ -105,7 +106,7 @@ def createFolder(request, pk):
     if request.method == "POST":
         folderName = request.POST.get("createFolderName")
         
-        if len(folderName) != 0:
+        if len(folderName) > 0:
             duplicated_folder = models.Folder.objects.filter(folderName=folderName, parent_id=pk if pk != 0 else None)
     
             # 폴더 생성
@@ -116,7 +117,7 @@ def createFolder(request, pk):
                 )
                 folder.save()
             
-            # 중복된 폴더 예외 처리
+            # 같은 폴더에 이름 중복된 폴더 예외 처리
             elif len(duplicated_folder) >= 1:
                 print("중복된 폴더 존재")           
         
@@ -140,22 +141,23 @@ def deleteFileAndFolder(request, pk):
 
         # 삭제
         else:
-            # 선택한 파일 삭제
-            if len(selected_file) >= 1:
-                for file_id in selected_file:
-                    file = models.Files.objects.get(id=file_id)
-                    file.delete()
-
             # 선택한 폴더 삭제
             if len(selected_folder) >= 1:
                 for folder_id in selected_folder:
                     folder = models.Folder.objects.get(id=folder_id)
                     folder.delete()
 
+            # 선택한 파일 삭제
+            if len(selected_file) >= 1:
+                for file_id in selected_file:
+                    file = models.Files.objects.get(id=file_id)
+                    file.delete()
+
     return redirect("devbox:changeDirectory", pk)
 
 
 # 파일 및 폴더 이름 수정
+@csrf_exempt
 def renameFileAndFolder(request, pk):
     if request.method == "POST":
         selected_folder = request.POST.getlist("selected_folder")
@@ -172,18 +174,21 @@ def renameFileAndFolder(request, pk):
 
         # 이름 수정
         else:
-            # 선택한 파일 이름 수정
-            if len(selected_file) >= 1:
-                for file_id in selected_file:
-                    file = models.Files.objects.get(id=file_id)
-                    file.fileName = rename
-                    file.save()
-
             # 선택한 폴더 이름 수정
             if len(selected_folder) >= 1:
                 for folder_id in selected_folder:
                     folder = models.Folder.objects.get(id=folder_id)
                     folder.folderName = rename
                     folder.save()
+
+            # 선택한 파일 이름 수정
+            if len(selected_file) >= 1:
+                rename = rename.split('.')
+                for file_id in selected_file:
+                    file = models.Files.objects.get(id=file_id)
+                    newFileName = rename[0]
+                    extension = file.fileName.split('.')[-1] if len(rename) == 1 else rename[-1]
+                    file.fileName = f"{newFileName}.{extension}"
+                    file.save()
 
     return redirect("devbox:changeDirectory", pk)
