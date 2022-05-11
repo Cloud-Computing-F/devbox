@@ -1,5 +1,3 @@
-# devbox
-
 ## Model
 - :heavy_check_mark: 파일 데이터베이스 Files(_id(pk)_, fileName, fileSize, uploadedFile, dateTimeOfUpload, parent_id(Folder _id_))
 - :heavy_check_mark: 폴더 데이터 베이스 Folder(_id(pk)_, folderName, dateTimeOfUpload, parent_id(Folder _id_))
