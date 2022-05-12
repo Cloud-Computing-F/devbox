@@ -14,6 +14,8 @@
 
 
 ## Future Plan
+- :x: 파일 및 폴더 이동
+
 - :x: 휴지통 데이터베이스 RecycleBins() 
   - :x: 삭제한 파일 및 폴더를 한 번에 볼 수 있는 template 필요
   - :x: 삭제 30일 지나면 영구 삭제 (시간에 대한 column 필요)
