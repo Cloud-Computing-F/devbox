@@ -7,9 +7,11 @@ from django.shortcuts import render, redirect
 from django.http import FileResponse, HttpResponse
 from django.core.files.storage import FileSystemStorage
 from django.views.decorators.csrf import csrf_exempt
-
+from .models import Files
 
 # display file / folder
+
+
 def display_file_and_folder(request, pk):
     files = models.Files.objects.filter(parent_id=pk if pk != 0 else None)
     folders = models.Folder.objects.filter(parent_id=pk if pk != 0 else None)
@@ -34,11 +36,12 @@ def change_directory(request, pk):
 def uploadFile(request, pk):
     if request.method == "POST":
         selected = request.FILES.getlist("uploadFile")
-        
+
         if len(selected) >= 1:
             for uploadedFile in request.FILES.getlist("uploadFile"):
-                duplicated_file = models.Files.objects.filter(fileName=uploadedFile.name, parent_id=pk if pk != 0 else None)
-                
+                duplicated_file = models.Files.objects.filter(
+                    fileName=uploadedFile.name, parent_id=pk if pk != 0 else None)
+
                 # 파일 업로드
                 if len(duplicated_file) == 0:
                     file = models.Files(
@@ -78,9 +81,11 @@ def downloadFile(request, pk):
                 for file_id in selected:
                     file = models.Files.objects.get(id=file_id)
                     file_path = os.path.basename(f"media/{file.uploadedFile}")
-                    myzip.write(f"media/UploadedFiles/{file_path}", file.fileName)
+                    myzip.write(
+                        f"media/UploadedFiles/{file_path}", file.fileName)
 
-            response = HttpResponse(byte_data.getvalue(), content_type="application/force-download")
+            response = HttpResponse(byte_data.getvalue(
+            ), content_type="application/force-download")
             response['Content-Disposition'] = f'attachment; filename={zip_name}.zip'
             response['Content-Length'] = byte_data.tell()
             return response
@@ -89,12 +94,14 @@ def downloadFile(request, pk):
         elif len(selected) == 1:
             file = models.Files.objects.get(id=selected[0])
             file_path = os.path.basename(f"media/{file.uploadedFile}")
-            file_system = FileSystemStorage(os.path.abspath("media/UploadedFiles/"))
+            file_system = FileSystemStorage(
+                os.path.abspath("media/UploadedFiles/"))
 
-            response = FileResponse(file_system.open(file_path), content_type='application/force-download')
+            response = FileResponse(file_system.open(
+                file_path), content_type='application/force-download')
             response['Content-Disposition'] = f'attachment; filename="{file.fileName}"'
             return response
-        
+
         # 파일 선택 안함 예외 처리
         elif len(selected) < 1:
             print("다운로드할 파일을 선택해 주세요")
@@ -105,10 +112,11 @@ def downloadFile(request, pk):
 def createFolder(request, pk):
     if request.method == "POST":
         folderName = request.POST.get("createFolderName")
-        
+
         if len(folderName) > 0:
-            duplicated_folder = models.Folder.objects.filter(folderName=folderName, parent_id=pk if pk != 0 else None)
-    
+            duplicated_folder = models.Folder.objects.filter(
+                folderName=folderName, parent_id=pk if pk != 0 else None)
+
             # 폴더 생성
             if len(duplicated_folder) == 0:
                 folder = models.Folder(
@@ -116,11 +124,11 @@ def createFolder(request, pk):
                     parent_id=pk if pk != 0 else None,
                 )
                 folder.save()
-            
+
             # 같은 폴더에 이름 중복된 폴더 예외 처리
             elif len(duplicated_folder) >= 1:
-                print("중복된 폴더 존재")           
-        
+                print("중복된 폴더 존재")
+
         # 이름 입력 안함 예외 처리
         elif len(folderName) == 0:
             print("이름을 입력해 주세요")
@@ -187,8 +195,24 @@ def renameFileAndFolder(request, pk):
                 for file_id in selected_file:
                     file = models.Files.objects.get(id=file_id)
                     newFileName = rename[0]
-                    extension = file.fileName.split('.')[-1] if len(rename) == 1 else rename[-1]
+                    extension = file.fileName.split(
+                        '.')[-1] if len(rename) == 1 else rename[-1]
                     file.fileName = f"{newFileName}.{extension}"
                     file.save()
 
     return redirect("devbox:changeDirectory", pk)
+
+
+# file sort
+def sortFile(request, pk):
+    sort = request.GET.get('sort', 'recent')
+    if sort == 'title':
+        files = Files.objects.order_by(
+            '-fileName', '-dateTimeOfUpload')
+    elif sort == 'size':
+        files = Files.objects.order_by('-fileSize', '-dateTimeOfUpload')
+    else:
+        files = Files.objects.order_by(
+            '-dateTimeOfUpload', '-dateTimeOfUpload')
+    folders = models.Folder.objects.filter(parent_id=pk if pk != 0 else None)
+    return render(request, 'devbox/main.html', {'files': files, 'folders': folders, 'sort': sort, 'current_folder_id': pk})
