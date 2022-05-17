@@ -20,7 +20,6 @@ def display_file_and_folder(request, pk):
         "folders": folders,
     })
 
-
 # home directory
 def home(request):
     return display_file_and_folder(request, 0)
@@ -29,7 +28,6 @@ def home(request):
 # change directory
 def change_directory(request, pk):
     return display_file_and_folder(request, pk)
-
 
 # 파일 업로드
 def uploadFile(request, pk):
@@ -211,4 +209,27 @@ def search(request):
     else :
         return render(request,template)
             
+def share_folder(request):
+    template = 'devbox/share_folder_link.html'
+    if request.method=='POST' :
+        selected_folder = request.POST.getlist("selected_folder")
+        if len(selected_folder)==0 :
+            print("공유하고 싶은 폴더를 선택해주세요")
             
+        else : 
+            for folder_id in selected_folder:
+                folder = models.Folder.objects.get(id=folder_id)
+                return render(request,template,context={
+                    'address':'127.0.0.1:8000/sh/'+str(folder.uuid),
+                    'uuid':folder.uuid
+                })
+
+
+def display_file_and_folder_ui(request,uuid):
+    folders = models.Folder.objects.filter(uuid=uuid)
+    files = models.Files.objects.filter(parent_id=0)
+    return render(request,"devbox/main.html",context={
+        "current_folder_id": 0 ,
+        "files": files,
+        "folders": folders,
+    })

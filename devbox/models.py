@@ -1,12 +1,14 @@
 import os.path
 from django.db import models
 from django.utils.timezone import now
+import uuid
 
 
 class Folder(models.Model):
     folderName = models.CharField(max_length=100, default=now().strftime("%Y%m%d%H%M%S"))
     dateTimeOfUpload = models.DateTimeField(auto_now=True)
     parent = models.ForeignKey('self', on_delete=models.CASCADE, related_name="child_folder", null=True, blank=True)
+    uuid = models.UUIDField(default=uuid.uuid4, unique=True)
 
     def get_foldername(self):
         return self.folderName

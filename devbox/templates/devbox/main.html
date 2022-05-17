@@ -29,12 +29,15 @@
         }
 
         table tr td {
-            padding-top: 15px;
+            padding-top: 15px; 
         }
     </style>
 </head>
 
 <body>
+    <div>
+        <span id="share-link"></span>
+    </div>
     <form action = "{% url 'devbox:search'%}" method="GET">
         <input name='search_input' type='text' placeholder="검색할 내용을 입력하세요" required>
         <button type='submit'>검색</button>
@@ -60,6 +63,7 @@
         <div>
             <input type="submit" value="다운로드" formaction="{% url 'devbox:downloadFile' current_folder_id %}"/>
             <input type="submit" value="삭제" formaction="{% url 'devbox:deleteFileAndFolder' current_folder_id %}"/>
+            <input type="submit" value="공유" id="share" formaction="{% url 'devbox:share-folder' %}"/>
         </div>
 
         <div>
@@ -104,5 +108,4 @@
         </table>
     </form>
 </body>
-
 </html>
