@@ -14,6 +14,7 @@ urlpatterns = [
     path("createFolder/<int:pk>/", views.createFolder, name="createFolder"),  # 폴더 생성
     path("deleteFileAndFolder/<int:pk>/", views.deleteFileAndFolder, name="deleteFileAndFolder"),  # 파일 및 폴더 삭제
     path("renameFileAndFolder/<int:pk>/", views.renameFileAndFolder, name="renameFileAndFolder"),  # 파일 및 폴더 이름 수정
+    path("search/",views.search,name="search"),
 ]
 
 if settings.DEBUG:

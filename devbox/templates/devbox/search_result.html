@@ -1,0 +1,66 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300&display=swap');
+        * {
+            font-family: "Roboto";
+        }
+
+        body {
+            background-color: #F5F5F5;
+        }
+
+        form {
+            background-color: #FFFFFF;
+            padding: 25px;
+        }
+
+        table {
+            width: 100%;
+            text-align: center;
+            margin-top: 25px;
+            padding: 25px;
+            background-color: #FFFFFF;
+        }
+
+        table tr td {
+            padding-top: 15px;
+        }
+</style>
+
+<h1> {{resSum}} 개의 결과 </h1>
+
+<table>
+    <tr>
+        <th>check</th>
+        <th>ID</th>
+        <th>Title</th>
+        <th>File Path</th>
+        <th>File Size</th>
+        <th>Upload Date & Time</th>
+    </tr>
+
+    {% if obj_folder%}
+    {% for folder in obj_folder %}
+    <tr>
+        <td>{{ folder.id }}</td>
+        <td><a href="{% url 'devbox:changeDirectory' folder.id %}">{{ folder.get_foldername }}</a></td>
+        <td>/{{ folder.id }}/</td>
+        <td></td>
+        <td>{{ folder.dateTimeOfUpload }}</td>
+    </tr>
+    {% endfor %}
+    {% endif %}
+
+    {% if obj_file %}
+    {% for file in obj_file %}
+    <tr>
+        <td>{{ file.id }}</td>
+        <td>{{ file.fileName }}</td>
+        <td>{{ file.uploadedFile.url }}</td>
+        <td>{{ file.fileSize|filesizeformat }}</td>
+        <td>{{ file.dateTimeOfUpload }}</td>
+    </tr>
+    {% endfor %}
+    {% endif %}
+</table>

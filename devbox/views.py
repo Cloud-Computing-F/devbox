@@ -7,6 +7,7 @@ from django.shortcuts import render, redirect
 from django.http import FileResponse, HttpResponse
 from django.core.files.storage import FileSystemStorage
 from django.views.decorators.csrf import csrf_exempt
+from django.db.models import Q
 
 
 # display file / folder
@@ -192,3 +193,22 @@ def renameFileAndFolder(request, pk):
                     file.save()
 
     return redirect("devbox:changeDirectory", pk)
+
+def search(request):
+    template = 'devbox/search_result.html'
+    if request.method == "GET":
+        query = request.GET.get('search_input')
+        if query is not None:
+            search_folder = Q(folderName__icontains=query)
+            search_file = Q(fileName__icontains=query)
+            obj_folder = models.Folder.objects.filter(search_folder).distinct()
+            obj_file = models.Files.objects.filter(search_file).distinct()
+            resSum = len(obj_file)+len(obj_folder)
+            context = {'obj_file':obj_file,'obj_folder':obj_folder,'resSum':resSum}
+            return render(request,template,context)
+        else : 
+            return render(request,template)
+    else :
+        return render(request,template)
+            
+            
