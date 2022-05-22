@@ -95,6 +95,7 @@
                 <span aria-hidden="true">&times;</span>
               </button>
               <h4 class="modal-title" id="myModalLabel">공유하기</h4>
+              <input type="textarea" id="copylink" style="width:500px"/>
             </div>
             <div class="modal-body">
               <h4>이메일/사용자</h4>
@@ -128,7 +129,7 @@
             </div>
               <div class="modal-footer">
                 <form method="POST" action="{% url 'devbox:mailing'%}">
-                  <input name="email_address" type="email" placeholder="이메일을 입력하세요" required>
+                  <input name="email_address" id="email_address" type="email" multiple placeholder="이메일을 입력하세요" required>
                   {% csrf_token %}
                   <input type="textarea" id="selected_target" name="selected_target"/>
                   <button class="btn btn-primary" type="submit">
@@ -150,7 +151,6 @@
         <div>
             <input type="submit" value="다운로드" formaction="{% url 'devbox:downloadFile' current_folder_id %}"/>
             <input type="submit" value="삭제" formaction="{% url 'devbox:deleteFileAndFolder' current_folder_id %}"/>
-            <input type="submit" value="공유" id="share" formaction="{% url 'devbox:share-folder' %}"/>
         </div>
 
         <div>
@@ -185,7 +185,7 @@
                   class="btn btn-primary"
                   data-toggle="modal"
                   data-target="#myModal"
-                  data-sharetargetfd="{{ folder.uuid }}">공유</button></td>
+                  data-sharetarget="{{ folder.uuid }}">공유</button></td>
             </tr>
             {% endfor %}
 
@@ -201,29 +201,43 @@
                   class="btn btn-primary"
                   data-toggle="modal"
                   data-target="#myModal"
-                  data-sharetargetfl="{{ file.id }}">공유</button></td>
+                  data-sharefile="{{ file.id }}">공유</button></td>
             </tr>
             {% endfor %}
         </table>
     </form>
 </body>
 <script>
+  let copyLink = document.getElementById("copylink");
+  let emailAddress=document.getElementById("email_address");
+
   $(document).ready(function(){
     $('#myModal').on('show.bs.modal',function(event){
       var button = $(event.relatedTarget)
-      var target_item = button.data('sharetargetfd');
-      var target_itemFL = button.data('sharetargetfl');
-      if(target_item){
-        //folder 
-        const blockText = document.getElementById("selected_target");
+      var target_item = button.data('sharetarget');
+      var target_itemFL = button.data('sharefile');
+      const blockText = document.getElementById("selected_target");
+      if(!target_itemFL){
         blockText.value="127.0.0.1:8000/sh/"+target_item;
+        copyLink.value="127.0.0.1:8000/sh/"+target_item;
+        blockText.style.display='None';
       }else{
-        //file
-        const blockTexted=document.getElementById("selected_target");
-        blockTexted.value="127.0.0.1:8000/s/"+target_itemFL;
+        blockText.value="127.0.0.1:8000/s/"+target_itemFL;
+        copyLink.value="127.0.0.1:8000/s/"+target_itemFL;
+        blockText.style.display='None';
       }
-      //blockText.style.display='None';
+
+      $("input[name='mode']").change(function(){
+        if($(this).is(':checked')&&$(this).val()=='email'){
+          emailAddress.style.display="Block";
+        }
+        if($(this).is(':checked')&&$(this).val()=='user'){
+          emailAddress.style.display="None";
+        }
+      });
+
     })
   })
+
 </script>
 </html>
