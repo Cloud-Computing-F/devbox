@@ -243,22 +243,7 @@ def sortFile(request, pk):
     folders = models.Folder.objects.filter(parent_id=pk if pk != 0 else None)
     return render(request, 'devbox/main.html', {'files': files, 'folders': folders, 'sort': sort, 'current_folder_id': pk})
 
-
-def share_folder(request):
-    template = 'devbox/share_folder_link.html'
-    if request.method=='POST' :
-        selected_folder = request.POST.getlist("selected_folder")
-        if len(selected_folder)==0 :
-            print("공유하고 싶은 폴더를 선택해주세요")
-            
-        else : 
-            for folder_id in selected_folder:
-                folder = models.Folder.objects.get(id=folder_id)
-                return render(request,template,context={
-                    'address':'127.0.0.1:8000/sh/'+str(folder.uuid),
-                    'uuid':folder.uuid
-                })
-
+# folder 공유 서비스 
 def display_file_and_folder_ui(request,uuid):
     folders = models.Folder.objects.filter(uuid=uuid)
     files = models.Files.objects.filter(parent_id=0)
@@ -267,7 +252,6 @@ def display_file_and_folder_ui(request,uuid):
         "files": files,
         "folders": folders,
     })
-
 
 # 메일링 서비스 
 @csrf_exempt

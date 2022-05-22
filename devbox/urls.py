@@ -15,7 +15,6 @@ urlpatterns = [
     path("deleteFileAndFolder/<int:pk>/", views.deleteFileAndFolder, name="deleteFileAndFolder"),  # 파일 및 폴더 삭제
     path("renameFileAndFolder/<int:pk>/", views.renameFileAndFolder, name="renameFileAndFolder"),  # 파일 및 폴더 이름 수정
     path("search/",views.search,name="search"),
-    path("sh/",views.share_folder,name="share-folder"),
     path("sh/<uuid:uuid>/",views.display_file_and_folder_ui,name='shared'),
     path("sortFile/<int:pk>/", views.sortFile, name="sortFile"),  # 파일 정렬
     path("mailing/",views.mailing, name="mailing"), # 메일링 
