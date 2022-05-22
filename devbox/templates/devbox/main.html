@@ -185,7 +185,7 @@
                   class="btn btn-primary"
                   data-toggle="modal"
                   data-target="#myModal"
-                  data-sharetarget="{{ folder.get_foldername }}">공유</button></td>
+                  data-sharetargetfd="{{ folder.uuid }}">공유</button></td>
             </tr>
             {% endfor %}
 
@@ -201,7 +201,7 @@
                   class="btn btn-primary"
                   data-toggle="modal"
                   data-target="#myModal"
-                  data-sharetarget="{{ file.fileName }}">공유</button></td>
+                  data-sharetargetfl="{{ file.id }}">공유</button></td>
             </tr>
             {% endfor %}
         </table>
@@ -211,10 +211,18 @@
   $(document).ready(function(){
     $('#myModal').on('show.bs.modal',function(event){
       var button = $(event.relatedTarget)
-      var target_item = button.data('sharetarget');
-      const blockText = document.getElementById("selected_target");
-      blockText.value=target_item;
-      blockText.style.display='None';
+      var target_item = button.data('sharetargetfd');
+      var target_itemFL = button.data('sharetargetfl');
+      if(target_item){
+        //folder 
+        const blockText = document.getElementById("selected_target");
+        blockText.value="127.0.0.1:8000/sh/"+target_item;
+      }else{
+        //file
+        const blockTexted=document.getElementById("selected_target");
+        blockTexted.value="127.0.0.1:8000/s/"+target_itemFL;
+      }
+      //blockText.style.display='None';
     })
   })
 </script>
