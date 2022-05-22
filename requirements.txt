@@ -1,0 +1,4 @@
+python==3.8.10
+Django==4.0.4
+debug_toolbar==3.4.0
+allauth==0.50.0.final.0
