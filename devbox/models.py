@@ -27,3 +27,4 @@ class Files(models.Model):
     def delete(self, *args, **kwargs):
         self.uploadedFile.delete()
         super().delete(*args, **kwargs)
+

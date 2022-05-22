@@ -32,6 +32,12 @@
             padding-top: 15px; 
         }
     </style>
+    <link
+    rel="stylesheet"
+    href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+  />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
 
 <body>
@@ -59,6 +65,87 @@
         </label>
     </form>
 
+    <form method="GET" action="{% url 'devbox:sortFile' current_folder_id %}">
+        <div class="col-4">
+          <select id="sort" name="sort">
+            <option value="title" , name="title">이름순</option>
+            <option value="size" ,name="size">크기순</option>
+            <option value="recent" ,name="recent">최신순</option>
+          </select>
+          <button class="btn btn-primary" type="submit">정렬</button>
+        </div>
+      </form>
+
+      <div
+        class="modal fade"
+        id="myModal"
+        tabindex="-1"
+        role="dialog"
+        aria-labelledby="myModalLabel"
+      >
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button
+                type="button"
+                class="close"
+                data-dismiss="modal"
+                aria-label="Close"
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
+              <h4 class="modal-title" id="myModalLabel">공유하기</h4>
+            </div>
+            <div class="modal-body">
+              <h4>이메일/사용자</h4>
+              <label
+                ><input type="radio" name="mode" value="email" checked />email
+              </label>
+              <label
+                ><input type="radio" name="mode" value="user" />user Id
+              </label>
+              <h4>액세스 권한</h4>
+              <label
+                ><input type="radio" name="access" value="public" checked />누구나
+              </label>
+              <label
+                ><input type="radio" name="access" value="private" />지정한 사람만
+              </label>
+              <h4>링크 만료기간</h4>
+              <label><input type="time" min="00:00" max="24:00" /> </label>
+              <h4>다운로드</h4>
+              <label
+                ><input
+                  type="radio"
+                  name="download"
+                  value="possible"
+                  checked
+                />가능
+              </label>
+              <label
+                ><input type="radio" name="download" value="impossible" />불가능
+              </label>
+            </div>
+              <div class="modal-footer">
+                <form method="POST" action="{% url 'devbox:mailing'%}">
+                  <input name="email_address" type="email" placeholder="이메일을 입력하세요" required>
+                  {% csrf_token %}
+                  <input type="textarea" id="selected_target" name="selected_target"/>
+                  <button class="btn btn-primary" type="submit">
+                    email로 보내기
+                  </button>
+                </form>
+                <button class="btn btn-primary" type="submit" data-dismiss="modal">
+                  사용자에게 보내기
+                </button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">
+                  닫기
+                </button> 
+              </div>
+          </div>
+        </div>
+      </div>
+
     <form method="POST">
         <div>
             <input type="submit" value="다운로드" formaction="{% url 'devbox:downloadFile' current_folder_id %}"/>
@@ -82,6 +169,7 @@
                 <th>File Path</th>
                 <th>File Size</th>
                 <th>Upload Date & Time</th>
+                <th>share</th>
             </tr>
 
             {% for folder in folders %}
@@ -92,6 +180,12 @@
                 <td>/{{ folder.id }}/</td>
                 <td></td>
                 <td>{{ folder.dateTimeOfUpload }}</td>
+                <!--data-target : 모달 이름, data-sharetarget : 쉐어할 폴더 작성--> 
+                <td><type="button"
+                  class="btn btn-primary"
+                  data-toggle="modal"
+                  data-target="#myModal"
+                  data-sharetargetfd="{{ folder.uuid }}">공유</button></td>
             </tr>
             {% endfor %}
 
@@ -103,9 +197,33 @@
                 <td>{{ file.uploadedFile.url }}</td>
                 <td>{{ file.fileSize|filesizeformat }}</td>
                 <td>{{ file.dateTimeOfUpload }}</td>
+                <td><type="button"
+                  class="btn btn-primary"
+                  data-toggle="modal"
+                  data-target="#myModal"
+                  data-sharetargetfl="{{ file.id }}">공유</button></td>
             </tr>
             {% endfor %}
         </table>
     </form>
 </body>
+<script>
+  $(document).ready(function(){
+    $('#myModal').on('show.bs.modal',function(event){
+      var button = $(event.relatedTarget)
+      var target_item = button.data('sharetargetfd');
+      var target_itemFL = button.data('sharetargetfl');
+      if(target_item){
+        //folder 
+        const blockText = document.getElementById("selected_target");
+        blockText.value="127.0.0.1:8000/sh/"+target_item;
+      }else{
+        //file
+        const blockTexted=document.getElementById("selected_target");
+        blockTexted.value="127.0.0.1:8000/s/"+target_itemFL;
+      }
+      //blockText.style.display='None';
+    })
+  })
+</script>
 </html>
