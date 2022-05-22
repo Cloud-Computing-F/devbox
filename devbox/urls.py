@@ -17,6 +17,8 @@ urlpatterns = [
     path("search/",views.search,name="search"),
     path("sh/",views.share_folder,name="share-folder"),
     path("sh/<uuid:uuid>/",views.display_file_and_folder_ui,name='shared'),
+    path("sortFile/<int:pk>/", views.sortFile, name="sortFile"),  # 파일 정렬
+    path("mailing/",views.mailing, name="mailing"), # 메일링 
 ]
 
 if settings.DEBUG:
