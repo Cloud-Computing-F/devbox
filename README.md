@@ -1,6 +1,7 @@
 ## Model
 - :heavy_check_mark: 파일 데이터베이스 Files(_id(pk)_, fileName, fileSize, uploadedFile, dateTimeOfUpload, parent_id(Folder _id_))
 - :heavy_check_mark: 폴더 데이터 베이스 Folder(_id(pk)_, folderName, dateTimeOfUpload, parent_id(Folder _id_))
+- :heavy_check_mark: 휴지통 데이터베이스 RecycleBins()
 
 
 ## Implementation
@@ -15,7 +16,7 @@
 
 ## Future Plan
 (고혜연)
-- :x: 휴지통 데이터베이스 RecycleBins()
+- :x: 
 - :x: 삭제한 파일를 한 번에 볼 수 있는 template 필요
 - :x: 삭제 30일 지나면 영구 삭제 (시간에 대한 column 필요)
     - :x: 휴지통 데이터베이스 및 파일 데이터베이스에서 데이터 삭제
