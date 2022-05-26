@@ -1,0 +1,88 @@
+{% load static %}
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!--    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">-->
+    <!--    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>-->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+        <title>DevBox</title>
+        <style>
+
+          body {
+            background-color: #f5f5f5;
+            font-family: 'Jua', sans-serif;
+          }
+
+          form {
+            background-color: #ffffff;
+            padding: 25px;
+          }
+
+          table {
+            width: 100%;
+            text-align: center;
+            margin-top: 25px;
+            padding: 25px;
+            background-color: #ffffff;
+          }
+
+          table tr td {
+            padding-top: 15px;
+          }
+        </style>
+    </head>
+
+    <body>
+        <a href="{% url 'devbox:home' %}">home</a>
+        <form method="POST">
+            <div>
+                <!-- 복구 -->
+                {% csrf_token%}
+                <input type="submit" value="복구" formaction="{% url 'devbox:restore' current_folder_id %}"/>
+                <!-- 삭제 -->
+                <input type="submit" value="영구삭제" formaction="{% url 'devbox:permanentDelete' current_folder_id %}"/>
+
+            </div>
+
+            <a href="{% url 'devbox:recyclebinDisplay' %}">root</a>
+            {% for p_folder in parentFolders %}
+            > <a href="{% url 'devbox:changeDirectoryInRecyclebin' p_folder.id %}"> {{p_folder.folderName}} </a>
+            {% endfor %}
+
+            <table>
+                <tr>
+                  <th>check</th>
+                  <th>Title</th>
+                  <th>File Size</th>
+                  <th>Upload Date & Time</th>
+                </tr>
+
+                {% if folders %}
+                {% for folder in folders %}
+                <tr>
+                    <td><label><input type="checkbox" name="selected_folder" value="{{ folder.id }}"/></label></td>
+                    <td><a href="{% url 'devbox:changeDirectoryInRecyclebin' folder.id %}">{{ folder.get_foldername }}</a></td>
+                    <td></td>
+                    <td>{{ folder.dateTimeOfUpload | date:'Y-m-d h:i A' }}</td>
+                </tr>
+                {% endfor %}
+                {% endif %}
+
+                {% if files %}
+                {% for file in files %}
+                <tr>
+                    <td><label><input type="checkbox" name="selected_file" value="{{ file.id }}"/></label></td>
+                    <td>{{ file.fileName }}</td>
+                    <td>{{ file.fileSize | filesizeformat }}</td>
+                    <td>{{ file.dateTimeOfUpload | date:'Y-m-d h:i A' }}</td>
+                </tr>
+                {% endfor %}
+                {% endif %}
+            </table>
+        </form>
+    </body>
+</html>
