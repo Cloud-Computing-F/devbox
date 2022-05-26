@@ -23,5 +23,11 @@ class Files(models.Model):
         return os.path.basename(self.uploadedFile.url)
 
     def delete(self, *args, **kwargs):
+        super(Files, self).delete(*args, **kwargs)
         self.uploadedFile.delete()
-        super().delete(*args, **kwargs)
+
+
+class RecycleBins(models.Model):
+    deletedFolderID = models.ForeignKey(Folder, on_delete=models.CASCADE, related_name="deleted_folder", null=True, blank=True)
+    deletedFileID = models.ForeignKey(Files, on_delete=models.CASCADE, related_name="deleted_files", null=True, blank=True)
+    dateTimeOfDelete = models.DateTimeField(auto_now=True)
