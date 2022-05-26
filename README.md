@@ -14,6 +14,8 @@
 - :heavy_check_mark: 파일 및 폴더 이름 수정 Rename files and folders 
 - :heavy_check_mark: 파일 및 폴더 복구 Restore files and folders
 - :heavy_check_mark: 파일 및 폴더 영구 삭제 Permanently delete files and folders
+- :heavy_check_mark: 파일 및 폴더 정렬 (이름순, 크기순, 최신순) Sorting (order by name, size, time)
+- :heavy_check_mark: 파읾 및 폴더 검색 Searching
 - :heavy_check_mark: 디렉토리 구조 표시 Display directory structure
 
 
