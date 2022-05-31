@@ -193,7 +193,7 @@
             <tr>
                 <td><label><input type="checkbox" name="selected_file" value="{{ file.id }}"></label></td>
                 <td>{{ file.id }}</td>
-                <td>{{ file.fileName }}</td>
+                <td><a href="{% url 'devbox:detail' file.id %}">{{ file.fileName }}</a></td>
                 <td>{{ file.uploadedFile.url }}</td>
                 <td>{{ file.fileSize|filesizeformat }}</td>
                 <td>{{ file.dateTimeOfUpload }}</td>
@@ -201,10 +201,56 @@
                   class="btn btn-primary"
                   data-toggle="modal"
                   data-target="#myModal"
-                  data-sharefile="{{ file.id }}">공유</button></td>
+                  data-sharefile="{{ file.uuid }}">공유</button></td>
             </tr>
             {% endfor %}
         </table>
+        <ul class="pagination justify-content-center">
+          {% if page.has_previous %}
+            <li calss="page item">
+              <a class="page-link" 
+                 href="?page={{page.previous_page_number}}">
+                  이전
+              </a>
+            </li>
+          {% else %}
+          <li class="page-item disabled">
+            <a class="page-link" tabindex="-1" aria-disabled="true" href="#">
+                이전
+            </a>
+          </li>
+          {% endif %}
+          {% for page_number in page.paginator.page_range %}
+              {% if page_number == page.number %}
+              <li calss="page-item active" aria-current="page">
+                <a class="page-link" href="?page={{page_number}}">
+                  {{page_number}}
+                </a>
+              </li>
+              {% else %}
+              <li class="page-item">
+                <a class="page-link" href="?page={{page_number}}">
+                  {{page_number}}
+                </a>
+              </li>
+              {% endif %}
+          {% endfor %}
+          {% if page.has_next %}
+          <li class="page-item">
+            <a class="page-link"
+               href="?page={{page.next_page_number}}">
+                다음  
+            </a>
+          </li>
+          {% else %}
+          <li class="page-item disabled">
+            <a class="page-link" tabindex="-1" aria-disabled="true" href="#">
+              다음
+            </a>
+          </li>
+          {% endif %}
+         </ul> 
+        </div>
     </form>
 </body>
 <script>
@@ -238,6 +284,5 @@
 
     })
   })
-
 </script>
 </html>

@@ -3,6 +3,7 @@ import zipfile
 from io import BytesIO
 from datetime import datetime
 from . import models
+from .models import Folder, Files
 from django.shortcuts import render, redirect
 from django.http import FileResponse, HttpResponse
 from django.core.files.storage import FileSystemStorage
@@ -11,17 +12,26 @@ from django.db.models import Q
 from django.core.mail import send_mail
 from django.conf import settings
 from django.template.loader import render_to_string
+from django.core.paginator import Paginator
+from django.shortcuts import get_object_or_404
 
 
-# display file / folder
+# display file / folder & pagination
 def display_file_and_folder(request, pk):
     files = models.Files.objects.filter(parent_id=pk if pk != 0 else None)
     folders = models.Folder.objects.filter(parent_id=pk if pk != 0 else None)
+    page = request.GET.get('page', '1')  # 페이지 수정 필요
+    file_list = Files.objects.order_by('-dateTimeOfUpload')
+    paginator = Paginator(file_list, 10)
+    page_obj = paginator.get_page(page)
+
     return render(request, "devbox/main.html", context={
         "current_folder_id": pk,
         "files": files,
         "folders": folders,
+        'page': page_obj,
     })
+
 
 # home directory
 def home(request):
@@ -32,15 +42,17 @@ def home(request):
 def change_directory(request, pk):
     return display_file_and_folder(request, pk)
 
+
 # 파일 업로드
 def uploadFile(request, pk):
     if request.method == "POST":
         selected = request.FILES.getlist("uploadFile")
-        
+
         if len(selected) >= 1:
             for uploadedFile in request.FILES.getlist("uploadFile"):
-                duplicated_file = models.Files.objects.filter(fileName=uploadedFile.name, parent_id=pk if pk != 0 else None)
-                
+                duplicated_file = models.Files.objects.filter(
+                    fileName=uploadedFile.name, parent_id=pk if pk != 0 else None)
+
                 # 파일 업로드
                 if len(duplicated_file) == 0:
                     file = models.Files(
@@ -80,9 +92,11 @@ def downloadFile(request, pk):
                 for file_id in selected:
                     file = models.Files.objects.get(id=file_id)
                     file_path = os.path.basename(f"media/{file.uploadedFile}")
-                    myzip.write(f"media/UploadedFiles/{file_path}", file.fileName)
+                    myzip.write(
+                        f"media/UploadedFiles/{file_path}", file.fileName)
 
-            response = HttpResponse(byte_data.getvalue(), content_type="application/force-download")
+            response = HttpResponse(byte_data.getvalue(
+            ), content_type="application/force-download")
             response['Content-Disposition'] = f'attachment; filename={zip_name}.zip'
             response['Content-Length'] = byte_data.tell()
             return response
@@ -91,12 +105,14 @@ def downloadFile(request, pk):
         elif len(selected) == 1:
             file = models.Files.objects.get(id=selected[0])
             file_path = os.path.basename(f"media/{file.uploadedFile}")
-            file_system = FileSystemStorage(os.path.abspath("media/UploadedFiles/"))
+            file_system = FileSystemStorage(
+                os.path.abspath("media/UploadedFiles/"))
 
-            response = FileResponse(file_system.open(file_path), content_type='application/force-download')
+            response = FileResponse(file_system.open(
+                file_path), content_type='application/force-download')
             response['Content-Disposition'] = f'attachment; filename="{file.fileName}"'
             return response
-        
+
         # 파일 선택 안함 예외 처리
         elif len(selected) < 1:
             print("다운로드할 파일을 선택해 주세요")
@@ -107,10 +123,11 @@ def downloadFile(request, pk):
 def createFolder(request, pk):
     if request.method == "POST":
         folderName = request.POST.get("createFolderName")
-        
+
         if len(folderName) > 0:
-            duplicated_folder = models.Folder.objects.filter(folderName=folderName, parent_id=pk if pk != 0 else None)
-    
+            duplicated_folder = models.Folder.objects.filter(
+                folderName=folderName, parent_id=pk if pk != 0 else None)
+
             # 폴더 생성
             if len(duplicated_folder) == 0:
                 folder = models.Folder(
@@ -118,11 +135,11 @@ def createFolder(request, pk):
                     parent_id=pk if pk != 0 else None,
                 )
                 folder.save()
-            
+
             # 같은 폴더에 이름 중복된 폴더 예외 처리
             elif len(duplicated_folder) >= 1:
-                print("중복된 폴더 존재")           
-        
+                print("중복된 폴더 존재")
+
         # 이름 입력 안함 예외 처리
         elif len(folderName) == 0:
             print("이름을 입력해 주세요")
@@ -189,12 +206,15 @@ def renameFileAndFolder(request, pk):
                 for file_id in selected_file:
                     file = models.Files.objects.get(id=file_id)
                     newFileName = rename[0]
-                    extension = file.fileName.split('.')[-1] if len(rename) == 1 else rename[-1]
+                    extension = file.fileName.split(
+                        '.')[-1] if len(rename) == 1 else rename[-1]
                     file.fileName = f"{newFileName}.{extension}"
                     file.save()
 
     return redirect("devbox:changeDirectory", pk)
 
+
+# 파일,폴더 검색
 def search(request):
     template = 'devbox/search_result.html'
     if request.method == "GET":
@@ -205,28 +225,32 @@ def search(request):
             obj_folder = models.Folder.objects.filter(search_folder).distinct()
             obj_file = models.Files.objects.filter(search_file).distinct()
             resSum = len(obj_file)+len(obj_folder)
-            context = {'obj_file':obj_file,'obj_folder':obj_folder,'resSum':resSum}
-            return render(request,template,context)
-        else : 
-            return render(request,template)
-    else :
-        return render(request,template)
-            
+            context = {'obj_file': obj_file,
+                       'obj_folder': obj_folder, 'resSum': resSum}
+            return render(request, template, context)
+        else:
+            return render(request, template)
+    else:
+        return render(request, template)
+
+
 def share_folder(request):
     template = 'devbox/share_folder_link.html'
-    if request.method=='POST' :
+    if request.method == 'POST':
         selected_folder = request.POST.getlist("selected_folder")
-        if len(selected_folder)==0 :
+        if len(selected_folder) == 0:
             print("공유하고 싶은 폴더를 선택해주세요")
-            
-        else : 
+
+        else:
             for folder_id in selected_folder:
                 folder = models.Folder.objects.get(id=folder_id)
-                return render(request,template,context={
-                    'address':'127.0.0.1:8000/sh/'+str(folder.uuid),
-                    'uuid':folder.uuid
+                return render(request, template, context={
+                    'address': '127.0.0.1:8000/sh/'+str(folder.uuid),
+                    'uuid': folder.uuid
                 })
 
+
+# 파일 정렬
 def sortFile(request, pk):
     sort = request.GET.get('sort', 'recent')
     # 파일명순
@@ -241,51 +265,79 @@ def sortFile(request, pk):
         files = Files.objects.order_by(
             '-dateTimeOfUpload', '-dateTimeOfUpload')
     folders = models.Folder.objects.filter(parent_id=pk if pk != 0 else None)
+
     return render(request, 'devbox/main.html', {'files': files, 'folders': folders, 'sort': sort, 'current_folder_id': pk})
 
 
+# 폴더 공유
 def share_folder(request):
     template = 'devbox/share_folder_link.html'
-    if request.method=='POST' :
+    if request.method == 'POST':
         selected_folder = request.POST.getlist("selected_folder")
-        if len(selected_folder)==0 :
+        if len(selected_folder) == 0:
             print("공유하고 싶은 폴더를 선택해주세요")
-            
-        else : 
+
+        else:
             for folder_id in selected_folder:
                 folder = models.Folder.objects.get(id=folder_id)
-                return render(request,template,context={
-                    'address':'127.0.0.1:8000/sh/'+str(folder.uuid),
-                    'uuid':folder.uuid
+                return render(request, template, context={
+                    'address': '127.0.0.1:8000/sh/'+str(folder.uuid),
+                    'uuid': folder.uuid,
+                    'option': 'folder'
                 })
 
-def display_file_and_folder_ui(request,uuid):
+
+def display_file_and_folder_ui(request, uuid):
     folders = models.Folder.objects.filter(uuid=uuid)
-    files = models.Files.objects.filter(parent_id=0)
-    return render(request,"devbox/main.html",context={
-        "current_folder_id": 0 ,
+    files = models.Files.objects.filter(uuid=uuid)
+    return render(request, "devbox/main.html", context={
+        "current_folder_id": 0,
         "files": files,
         "folders": folders,
     })
 
 
-# 메일링 서비스 
+# 파일 공유
+def share_file(request):
+    template = 'devbox/share_folder_link.html'
+    if request.method == 'POST':
+        selected_file = request.POST.getlist("selected_file")
+        if len(selected_file) == 0:
+            print("공유하고 싶은 파일을 선택해주세요")
+
+        else:
+            for files_id in selected_file:
+                file = models.Files.objects.get(id=files_id)
+                return render(request, template, context={
+                    'address': '127.0.0.1:8000/s/'+str(file.uuid),
+                    'uuid': file.uuid,
+                    'option': 'file'
+                })
+
+
+# 메일링 서비스
 @csrf_exempt
 def mailing(request):
-    if request.method=='POST' :
+    if request.method == 'POST':
         # 파일 혹은 폴더 선택
         selected_target = request.POST.get('selected_target')
         # 이메일 주소 입력 -> (2022.05.22 기준 이메일 하나만 작성가능)
         email_address = request.POST.get('email_address')
         recipient_list = [email_address]
-        # 'devbox/mail.html' 에서 mailing 시 들어갈 email 화면을 꾸밀 수 있습니다. 
-        html_message=render_to_string('devbox/mail.html',context={
+        # 'devbox/mail.html' 에서 mailing 시 들어갈 email 화면을 꾸밀 수 있습니다.
+        html_message = render_to_string('devbox/mail.html', context={
             # 주소는 공유 파일/폴더 주소에 맞게 수정하면 됩니다.
             # 우선은 가장 기본적인 것으로 설정해뒀습니다.
-            'link':selected_target,
+            'link': selected_target,
         })
         # send_mail (메일 제목, 메일 내용, email_from,recipient_list,html_message)
-        send_mail("DevBox 공유 메일","테스트 내용입니다.",settings.EMAIL_HOST_USER,recipient_list,html_message=html_message)
-        # 바로 홈 화면으로 넘어갑니다. 
+        send_mail("DevBox 공유 메일", "테스트 내용입니다.", settings.EMAIL_HOST_USER,
+                  recipient_list, html_message=html_message)
+        # 바로 홈 화면으로 넘어갑니다.
         return display_file_and_folder(request, 0)
 
+
+# file detail 페이지
+def detail(request, pk):
+    file = get_object_or_404(Files, pk=pk)
+    return render(request, 'devbox/detail.html', {'file': file})
