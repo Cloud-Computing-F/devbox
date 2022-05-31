@@ -1,16 +1,11 @@
-## requirements
-(1) <b>setting.py</b> <br>
-pip install pymysql <br>
-pymysql.install_as_MySQLdb()
+## feature/merge
 
-(2) <b>models.py</b><br>
-import uuid<br>
+혜연님께서 만들어주신 html 파일에 기존의 기능들을 옮겨 담았습니다.
 
-## share-folder
-✔️ uuid를 통해서 공유할 수 있도록 설정. 실제 path는 쓰이지 않음. <br>
-✔️ 메인 페이지에 바로 링크를 띄울 수 있도록 수정할 예정. <br>
-✔️ 현재는 공유 -> 공유 링크 생성 (/sh/uuid) -> 새로운 페이지에 링크 보여지게 함 <br>
-✔️ 정상 동작 확인함.
+#### 변동사항
+✅ Devbox/view.py -> html 링크 변경 <br>
+✅ Config/url.py -> url 변경 <br>
 
-
-
+#### 진행사항
+✅몇 개의 기능들이 겹쳐지면서 작동을 안하는 것처럼 보이나, 실제로는 작동함 <br>
+✅테스트한 기능 : 폴더 만들기, 파일 업로드, 메일링, 다운로드, 삭제, 검색
