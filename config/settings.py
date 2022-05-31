@@ -118,7 +118,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'devbox',
         'USER': 'root',
-        'PASSWORD': '030923',
+        'PASSWORD': 'devbox',
         'HOST': '127.0.0.1',
         'PORT': '3306',
     }
@@ -174,7 +174,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 LOGIN_URL = '/login/'
 
 SITE_ID = 1
-LOGIN_REDIRECT_URL = '/home/'
+LOGIN_REDIRECT_URL = '/'
 
 #send_email
 

@@ -19,7 +19,7 @@ from rest_framework.permissions import IsAdminUser
 def display_file_and_folder(request, pk):
     files = models.Files.objects.filter(parent_id=pk if pk != 0 else None)
     folders = models.Folder.objects.filter(parent_id=pk if pk != 0 else None)
-    return render(request, "devbox/main.html", context={
+    return render(request, "home.html", context={
         "current_folder_id": pk,
         "files": files,
         "folders": folders,
@@ -106,7 +106,6 @@ def downloadFile(request, pk):
 
 
 # 폴더 생성
-@permission_classes([IsAdminUser])
 def createFolder(request, pk):
     if request.method == "POST":
         folderName = request.POST.get("createFolderName")
@@ -252,7 +251,7 @@ def sortFile(request, pk):
 def display_file_and_folder_ui(request,uuid):
     folders = models.Folder.objects.filter(uuid=uuid)
     files = models.Files.objects.filter(parent_id=0)
-    return render(request,"devbox/main.html",context={
+    return render(request,"home.html",context={
         "current_folder_id": 0 ,
         "files": files,
         "folders": folders,
