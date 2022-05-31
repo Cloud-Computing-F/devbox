@@ -41,6 +41,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'devbox',
     'django.contrib.sites',
+    'rest_framework',
+    'rest_framework.authtoken',
+    'rest_framework.permissions',
+    'rest_framework.decorators', 
 ]
 
 INSTALLED_APPS += [
@@ -52,6 +56,15 @@ INSTALLED_APPS += [
     'apis',
     'contents',
 ]
+
+REST_FRAMEWORK={
+    'DEFAULT_AUTHENTICATION_CLASSES':[
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+   'rest_framework.permissions.IsAdminUser',
+   ],
+}
 
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
@@ -105,7 +118,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'devbox',
         'USER': 'root',
-        'PASSWORD': 'devbox',
+        'PASSWORD': '030923',
         'HOST': '127.0.0.1',
         'PORT': '3306',
     }
@@ -161,7 +174,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 LOGIN_URL = '/login/'
 
 SITE_ID = 1
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/home/'
 
 #send_email
 

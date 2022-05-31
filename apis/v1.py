@@ -7,6 +7,7 @@ from django.db import IntegrityError
 from django.core.validators import validate_email, ValidationError
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from rest_framework.authtoken.models import Token
 
 
 from contents.models import Content, FollowRelation

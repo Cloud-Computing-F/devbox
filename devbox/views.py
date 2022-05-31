@@ -11,6 +11,8 @@ from django.db.models import Q
 from django.core.mail import send_mail
 from django.conf import settings
 from django.template.loader import render_to_string
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAdminUser
 
 
 # display file / folder
@@ -104,6 +106,7 @@ def downloadFile(request, pk):
 
 
 # 폴더 생성
+@permission_classes([IsAdminUser])
 def createFolder(request, pk):
     if request.method == "POST":
         folderName = request.POST.get("createFolderName")
@@ -195,6 +198,8 @@ def renameFileAndFolder(request, pk):
 
     return redirect("devbox:changeDirectory", pk)
 
+
+@permission_classes((IsAdminUser, ))
 def search(request):
     template = 'devbox/search_result.html'
     if request.method == "GET":

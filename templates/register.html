@@ -1,31 +1,199 @@
-{% extends "base.html" %}
+     
 
-{% block body %}
-<div class="register">
-<div class="col-md-6">
-<h1 class="text-danger">Register</h1>
-<hr>
-    <div class="form-group">
-      <label for="InputUsername" class="text-danger">Username :</label>
-      <input type="text" class="form-control" id="username" placeholder="Enter Username">
-      <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
-    </div>
-    <div class="form-group">
-        <label for="InputEmail" class="text-danger">Email :</label>
-        <input type="email" class="form-control" id="email" placeholder="Email">
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,
+    initial-scale=1.0" />
+    <script src="https://kit.fontawesome.com/596cc0eddc.js" crossorigin="anonymous"></script>
+    <title>Devbox</title>
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Josefin+Sans:ital,wght@1,700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
+
+html {
+  width: 100%;
+  height: 100%;
+}
+
+hr {
+  position: relative;
+  top: 15px;
+  width: 100px; 
+
+}
+
+body {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.jb {
+    margin: 0px auto;
+    width: 100%;
+    height: 100vh;
+    background: 
+    linear-gradient(135deg,#EC9999, #D8E7FC, transparent),
+    linear-gradient(300deg,#F1AD3F, transparent);
+    background-blend-mode: sreen;
+    positon :relative;
+}
+
+.jb2{
+    margin: 0px auto;
+    width: 100%;
+    height: 100vh;
+    background: 
+    radial-gradient(circle closest-corner at 40% 10%,#90B4F7,transparent),
+    radial-gradient(circle closest-corner at 63% 94%,#D54F52, transparent),
+    radial-gradient(circle closest-corner at 80% 5%,#D8E7FC, transparent),
+    radial-gradient(circle closest-corner at 90% 5%,#D8E7FC, transparent),
+    radial-gradient(circle closest-corner at 15% 90%,#D8E7FC, transparent);
+    background-blend-mode: sreen;
+    position: absolute;
+}
+
+main {
+  display: flex;
+  width: 1180px;
+  height: 550px;
+  border-radius: 20px;
+  position: absolute;
+  -moz-box-shadow: 0 0 4px #F7FFFF;
+  -webkit-box-shadow: 0 0 4px #F7FFFF;
+  box-shadow: 0px 0px 4px #F7FFFF;
+  opacity: 0.84;
+}
+
+.left {
+  background: #C7D7F9;
+  width: 50%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  border-radius: 20px 0px 0px 20px;
+}
+
+
+.title {
+  font-size: 40px;  
+  font-weight: 1000;
+  font-family: 'GangwonEduPowerExtraBoldA';
+  text-shadow: 3px 5px 5px #adaccd;
+  color: #282862;
+  margin-top: 60px;
+  margin-bottom: 50px;
+  text-align: center;
+}
+
+.container {
+  width: 294px;
+  height: 38px;
+  margin: 20px 150px 15px;
+  border: 1.5px solid #cacaca;
+  background-color: transparent;
+  border-radius: 5px;
+  box-shadow: 0px 0px 4px #cacaca;
+}
+
+.input_container {
+  margin-top: 9px;
+  margin-left: 12px;
+  border: none;
+  color: #282862;
+  font-weight: 700;
+  font-size: 14.5px;
+  font-family: "Noto Sans KR", sans-serif;
+  opacity: 0.9;
+}
+.input_container i{
+    color: #282862;
+    margin: 2px;
+    opacity: 0.8;
+}
+.input_container input{
+    background: none;
+    border: none;
+    padding-left: 6px;
+    width:240px;
+}
+.input_contanier input:focus{
+    outline: none;
+}
+
+
+.right {
+  border-radius: 0px 20px 20px 0px;
+  background: #FFFFFF;
+  width: 50%;
+  height: 100%;
+} 
+
+.btn_signup {
+  width: 298px;
+  height: 40px;
+  margin: 20px 150px 0px;
+  border-radius: 5px;
+  border: 0;
+  outline: none;
+  background: #282862;
+  margin-top: 25px;
+  font-weight: 800;
+  font-size: 15px;
+  font-family: "Noto Sans KR", sans-serif;
+  color: #FFFFFF;
+  text-align: center;
+}
+
+
+    </style>
+  </head>
+</html>
+
+
+<body>
+    <div class="jb"></div>
+    <div class="jb2"></div> 
+
+    <main>
+      <div class="left">
+
       </div>
-    <div class="form-group">
-      <label for="InputPassword" class="text-danger">Password :</label>
-      <input type="password" class="form-control" id="password" placeholder="Password">
-    </div>
-    <button class="btn btn-danger" id="register">Register</button>
-    <script
-    src="https://code.jquery.com/jquery-3.4.1.min.js"
-    integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
-    crossorigin="anonymous"></script>
-</div>
-</div>
- 
+
+      <div class="right"> 
+        <div class="title">Sign Up</div>
+
+        <div class="container">
+            <div class="input_container">
+                <i class="fas fa-user"></i>
+                <input placeholder="Name" type="text" id="username">
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="input_container">
+                <i class="fa-solid fa-envelope"></i>
+                <input placeholder="Email" type="email" id="email">
+            </div>
+        </div>        
+
+
+        <div class="container">
+            <div class="input_container">
+                <i class="fa-solid fa-lock"></i>
+                <input placeholder="Password" type="password" id="password">
+            </div>
+        </div>    
+        <button class="btn_signup" id="register">Create</button> 
+        <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="crossorigin="anonymous"></script>
+      </div>
+    </main>
 
   <script>
 $(document).ready(function () {
@@ -39,4 +207,5 @@ $('#register').click(function() {
 });
 });
   </script>
-{% endblock %}
+
+</body>
