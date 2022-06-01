@@ -322,11 +322,12 @@ th, td {
                   <input name="email_address" id="email_address" type="email" multiple placeholder="이메일을 입력하세요" required>
                   {% csrf_token %}
                   <input type="textarea" id="selected_target" name="selected_target"/>
-                  <button class="btn btn-primary" type="submit">
+                  <button class="btn btn-primary" type="submit" id="sendEmailBTN">
                     email로 보내기
                   </button>
                 </form>
-                <button class="btn btn-primary" type="submit" data-dismiss="modal">
+                <input name="to_user" id="to_user" type="textarea" placeholder="사용자를 입력하세요" required>
+                <button class="btn btn-primary" type="submit" data-dismiss="modal" id='sendUserBTN'>
                   사용자에게 보내기
                 </button>
                 <button type="button" class="btn btn-default" data-dismiss="modal">
@@ -510,6 +511,13 @@ th, td {
   // 모달 작성 부분 (수정 필요 없습니다!)
   let copyLink = document.getElementById("copylink");
   let emailAddress=document.getElementById("email_address");
+  let to_user = document.getElementById("to_user");
+  let sendUserBTN = document.getElementById("sendUserBTN");
+  let sendEmailBTN = document.getElementById("sendEmailBTN");
+
+  sendUserBTN.style.display="None";
+  sendEmailBTN.style.display="Block";
+  to_user.style.display="None";
 
   $(document).ready(function(){
     $('#myModal').on('show.bs.modal',function(event){
@@ -530,9 +538,15 @@ th, td {
       $("input[name='mode']").change(function(){
         if($(this).is(':checked')&&$(this).val()=='email'){
           emailAddress.style.display="Block";
+          sendUserBTN.style.display="None";
+          sendEmailBTN.style.display="Block";
+          to_user.style.display="None";
         }
         if($(this).is(':checked')&&$(this).val()=='user'){
           emailAddress.style.display="None";
+          sendEmailBTN.style.display="None";
+          sendUserBTN.style.display="Block";
+          to_user.style.display="Block";
         }
       });
 
