@@ -316,27 +316,6 @@ th, td {
               <label
                 ><input type="radio" name="mode" value="user" />user Id
               </label>
-              <h4>액세스 권한</h4>
-              <label
-                ><input type="radio" name="access" value="public" checked />누구나
-              </label>
-              <label
-                ><input type="radio" name="access" value="private" />지정한 사람만
-              </label>
-              <h4>링크 만료기간</h4>
-              <label><input type="time" min="00:00" max="24:00" /> </label>
-              <h4>다운로드</h4>
-              <label
-                ><input
-                  type="radio"
-                  name="download"
-                  value="possible"
-                  checked
-                />가능
-              </label>
-              <label
-                ><input type="radio" name="download" value="impossible" />불가능
-              </label>
             </div>
               <div class="modal-footer">
                 <form method="POST" action="{% url 'devbox:mailing'%}">
