@@ -13,9 +13,12 @@ from django.conf import settings
 from django.template.loader import render_to_string
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAdminUser
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
 
 
 # display file / folder
+
 def display_file_and_folder(request, pk):
     files = models.Files.objects.filter(parent_id=pk if pk != 0 else None)
     folders = models.Folder.objects.filter(parent_id=pk if pk != 0 else None)
@@ -26,11 +29,13 @@ def display_file_and_folder(request, pk):
     })
 
 # home directory
+
 def home(request):
     return display_file_and_folder(request, 0)
 
 
 # change directory
+
 def change_directory(request, pk):
     return display_file_and_folder(request, pk)
 
@@ -198,7 +203,6 @@ def renameFileAndFolder(request, pk):
     return redirect("devbox:changeDirectory", pk)
 
 
-@permission_classes((IsAdminUser, ))
 def search(request):
     template = 'devbox/search_result.html'
     if request.method == "GET":
@@ -230,7 +234,7 @@ def share_folder(request):
                     'address':'127.0.0.1:8000/sh/'+str(folder.uuid),
                     'uuid':folder.uuid
                 })
-
+                
 def sortFile(request, pk):
     sort = request.GET.get('sort', 'recent')
     # 파일명순

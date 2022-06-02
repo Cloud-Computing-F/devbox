@@ -30,7 +30,6 @@ urlpatterns = [
     path('relation/', RelationView.as_view(), name='contents_relation'),
     #path('relation/create/',RelationCreateView.as_view()),
     path('apis/', include('apis.urls')),
-
     path("home/", include('devbox.urls')),
 ]
 
