@@ -23,13 +23,13 @@ class NonUserTemplateView(TemplateView):
 urlpatterns = [
     path('admin/', admin.site.urls),
 
-    #path('', HomeView.as_view(), name='contents_home'),
+    path('', HomeView.as_view(), name='contents_home'),
     path('login/', NonUserTemplateView.as_view(template_name='login.html'), name='login'),
     path('register/', NonUserTemplateView.as_view(template_name='register.html'), name='register'),
     path('relation/', RelationView.as_view(), name='contents_relation'),
     path('apis/', include('apis.urls')),
 
-    path("", include('devbox.urls')),
+    path("home/", include('devbox.urls')),
 ]
 
 
