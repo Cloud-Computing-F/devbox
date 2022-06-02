@@ -7,6 +7,7 @@ from django.views.generic import TemplateView
 from django.conf import settings
 
 from contents.views import HomeView, RelationView
+from apis.v1 import RelationCreateView
 
 admin.site.site_header = "Fastgram Admin"
 admin.site.site_title = "Fastgram Admin Site"
@@ -27,6 +28,7 @@ urlpatterns = [
     path('login/', NonUserTemplateView.as_view(template_name='login.html'), name='login'),
     path('register/', NonUserTemplateView.as_view(template_name='register.html'), name='register'),
     path('relation/', RelationView.as_view(), name='contents_relation'),
+    #path('relation/create/',RelationCreateView.as_view()),
     path('apis/', include('apis.urls')),
 
     path("home/", include('devbox.urls')),

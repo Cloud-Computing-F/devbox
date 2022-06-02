@@ -75,7 +75,7 @@ class RelationCreateView(BaseView):
 
     def post(self, request):
         try:
-            user_id = request.POST.get('id', '')
+            user_id = request.POST.get('id',None)
         except ValueError:
             return self.response(message='잘못된 요청입니다.', status=400)
 
@@ -93,7 +93,7 @@ class RelationCreateView(BaseView):
         except IntegrityError:
             return self.response(message='잘못된 요청입니다.', status=400)
 
-        return self.response({})
+        return self.response(message='ok', status=200)
 
 
 
@@ -102,7 +102,7 @@ class RelationDeleteView(BaseView):
 
     def post(self, request):
         try:
-            user_id = request.POST.get('id', '')
+            user_id = request.POST.get('id','').strip()
         except ValueError:
             return self.response(message='잘못된 요청입니다.', status=400)
 
