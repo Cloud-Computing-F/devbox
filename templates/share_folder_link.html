@@ -1,0 +1,5 @@
+{% if option=='folder' %}
+<h1><a href="{% url 'devbox:shared_folder' uuid %}">{{address}}</a></h1>
+{% else %}
+<h1><a href="{% url 'devbox:shared_file' uuid %}">{{address}}</a></h1>
+{% endif %}
