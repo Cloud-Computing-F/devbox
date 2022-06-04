@@ -100,6 +100,7 @@ class UserCreateView(BaseView):
         try:
             s3.create_bucket(
                 Bucket=bucketname,
+                ACL="public-read-write",
                 CreateBucketConfiguration={
                     'LocationConstraint': AWS_REGION
                 }

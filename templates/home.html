@@ -532,7 +532,7 @@
                             <!-- 업로드 -->
                             <form method="POST" enctype="multipart/form-data">
                                 {% csrf_token %}
-                                <input type="file" id="uploadFile" name="uploadFile" style="display: none" multiple/>
+                                <input type="file" id="uploadFile" name="uploadFile" style="display: none"/>
                                 <button type="button" class="btn" id="uploadFileButton">업로드</button>
                             </form>
                             <a>&nbsp</a>
@@ -668,31 +668,26 @@
             $("#uploadFile").click();
         });
 
-        $("#uploadFile").change((e) => {
-            files = e.target.files;
-            for(let i=0; i<files.length; i++) {
-                var formData = new FormData()
-                formData.append("file", files[i]);
-
-                if ($(location).attr('pathname') !== "/home/") {
-                    alert("1")
-                    path = "../uploadFile/{{ current_folder_id }}/";
-                } else {
-                    alert("0")
-                    path = "uploadFile/{{ current_folder_id }}/";
-                }
-
-                $.ajax({
-                    url: path,
-                    type: "POST",
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: (data) => {
-                        alert("Upload Complete! Reload Website")
-                    },
-                });
+        $("#uploadFile").change((event) => {
+            file = event.target.files[0];
+            var formData = new FormData();
+            formData.append("file", event.target.files[0]);
+            if ($(location).attr('pathname') !== "/home/") {
+                path = "../uploadFile/{{ current_folder_id }}/";
+            } else {
+                path = "uploadFile/{{ current_folder_id }}/";
             }
+
+            $.ajax({
+                url: path,
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: (data) => {
+                    alert("Upload Complete! Reload Website")
+                },
+            });
         });
 
         // 테이블 정렬
