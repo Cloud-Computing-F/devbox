@@ -9,6 +9,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from rest_framework.authtoken.models import Token
 from django.views.generic.base import TemplateView
+from django.shortcuts import render,redirect
 
 
 from contents.models import Content, FollowRelation
@@ -76,10 +77,10 @@ class RelationCreateView(BaseView):
 
     def post(self, request):
         try:
-            username = request.POST.get('id',None)
-            user_id = User.objects.get(username=username)
+            user_id= request.POST.get('id','')
+            #user_id = User.objects.get(username=username)
             
-            user_id = user_id.id
+            #user_id = user_id.id
         except ValueError:
             return self.response(message='잘못된 요청입니다.', status=400)
 
@@ -89,7 +90,7 @@ class RelationCreateView(BaseView):
             relation = FollowRelation.objects.create(follower=request.user)
 
         try:
-            if user_id == request.user.username:
+            if user_id == request.user.id:
                 # 자기 자신은 팔로우 안됨.
                 raise IntegrityError
             relation.followee.add(user_id)
@@ -97,7 +98,7 @@ class RelationCreateView(BaseView):
         except IntegrityError:
             return self.response(message='잘못된 요청입니다.', status=400)
 
-        return self.response({})
+        return redirect("contents_relation")
 
 
 
@@ -106,7 +107,7 @@ class RelationDeleteView(BaseView):
 
     def post(self, request):
         try:
-            user_id = request.POST.get('id','').strip()
+            user_id = request.POST.get('id','')
         except ValueError:
             return self.response(message='잘못된 요청입니다.', status=400)
 

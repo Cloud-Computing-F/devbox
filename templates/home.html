@@ -342,7 +342,7 @@
     </head>
 
     <body>
-        <!--모달 부분 (여기는 로직 수정 X, 디자인 수정 필요 O)-->
+        <!--모달 부분 (여기는 로직 수정 X, 디자인 수정 필요 O) 공유 모달 -->
   <div
   class="modal fade"
   id="myModal"
@@ -394,6 +394,82 @@
   </div>
 </div>
 <!--모달 부분 끝 -->
+
+
+
+<!--폴더 업로드 모달 시작-->
+<div
+class="modal fade"
+id="folderModal"
+tabindex="-1"
+role="dialog"
+aria-labelledby="myModalLabel"
+>
+<div class="modal-dialog" role="document">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button
+        type="button"
+        class="close"
+        data-dismiss="modal"
+        aria-label="Close"
+      >
+        <span aria-hidden="true">&times;</span>
+      </button>
+      <h4 class="modal-title" id="myModalLabel">폴더 만들기</h4>
+    </div>
+    <div class="modal-body">
+      <form action="{% url 'devbox:createFolder' current_folder_id %}" method="POST">
+        {% csrf_token %}
+      <input type="text" name="createFolderName">
+      <button type="submit">만들기</button>
+      </form>
+    </div>
+      <div class="modal-footer">
+      </div>
+  </div>
+</div>
+</div>
+<!--폴더 업로드 모달 끝-->
+
+
+<!--수정 업로드 모달 시작-->
+<div
+class="modal fade"
+id="editModal"
+tabindex="-1"
+role="dialog"
+aria-labelledby="myModalLabel"
+>
+<div class="modal-dialog" role="document">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button
+        type="button"
+        class="close"
+        data-dismiss="modal"
+        aria-label="Close"
+      >
+        <span aria-hidden="true">&times;</span>
+      </button>
+      <h4 class="modal-title" id="myModalLabel">파일 및 폴더 이름 수정하기</h4>
+    </div>
+    <div class="modal-body">
+      <form action="{% url 'devbox:renameFileAndFolder' current_folder_id %}" method="POST">
+        {% csrf_token %}
+        <input type="textarea" id="rename_item" name="selected_folder"/>
+        <input type="text" name="renameFileAndFolderName" placeholder="수정할 이름">
+      <button type="submit">수정</button>
+      </form>
+    </div>
+      <div class="modal-footer">
+      </div>
+  </div>
+</div>
+</div>
+<!--수정 업로드 모달 끝-->
+
+
 
         <div class="wrapper">
             <div class="sidebar">
@@ -460,9 +536,14 @@
                         <div class="btns">
                             {% csrf_token %}
                             <!-- 폴더 생성 : input 이 필요해서 이렇게 작성했습니다.-->
-                            <form action="{% url 'devbox:createFolder' current_folder_id %}" method="POST">
-                                {% csrf_token %}
-                                <button class="btn" type="submit">새 폴더</button>
+                            {% comment %} <form action="{% url 'devbox:createFolder' current_folder_id %}" method="POST">
+                                {% csrf_token %} {% endcomment %}
+                                {% comment %} <button class="btn" type="submit">새 폴더</button> {% endcomment %}
+                                <button type="button"
+                                    class="btn"
+                                    data-toggle="modal"
+                                    data-target="#folderModal">새 폴더
+                                </button>
                             </form>
                             <a>&nbsp</a>
 
@@ -479,10 +560,17 @@
                                 <!-- 다운로드 -->
                                 <button class="btn" type="submit" formaction="{% url 'devbox:downloadFile' current_folder_id %}">다운로드</button>
 
-                                <!-- 기존 수정 버튼 옆에 input이 있어서 작성했습니다 : 무슨 용도인지 잘 모르겠어요 -->
+                                <!-- 수정 버튼 -->
                                 {% csrf_token%}
-                                <button class="btn" type="submit" formaction="{% url 'devbox:renameFileAndFolder' current_folder_id %}">수정</button>
-
+                              
+                                <button type="button"
+                                    class="btn"
+                                    data-toggle="modal"
+                                    data-target="#editModal"
+                                    
+                                >수정
+                                </button>
+              
                                 <!-- 삭제 -->
                                 <button class="btn" type="submit" formaction="{% url 'devbox:deleteFileAndFolder' current_folder_id %}">삭제</button>
                         </div>
@@ -510,7 +598,8 @@
                                     class="share_btn"
                                     data-toggle="modal"
                                     data-target="#myModal"
-                                    data-sharetarget="{{ folder.uuid }}">
+                                    data-sharetarget="{{ folder.uuid }}"
+                                  >
                                 <i class="fas fa-share"></i>
                                 </button>
                                 </td>
@@ -549,7 +638,7 @@
         })
 
       
-  // 모달 작성 부분 (수정 필요 없습니다!)
+  // 공유 모달 작성 부분 (수정 필요 없습니다!)
   let copyLink = document.getElementById("copylink");
   let emailAddress=document.getElementById("email_address");
   let to_user = document.getElementById("to_user");
@@ -593,6 +682,26 @@
 
     })
   })
+
+  // 수정 모달 
+
+  $(document).ready(function(){
+
+    var editModal = $('#editModal')
+    $('#editModal').on('show.bs.modal',function(event){
+      var button = $(event.relatedTarget)
+      const blockText = document.getElementById("rename_item")
+
+      $('input:checkbox[name=selected_folder]').each(function (index) {
+        if($(this).is(":checked")==true){
+            console.log($(this).val());
+            blockText.value = $(this).val();
+            blockText.style.display="None"
+          }
+      })
+    })
+  })
+
 
         // 파일 업로드
         $("#uploadFileButton").click(function() {

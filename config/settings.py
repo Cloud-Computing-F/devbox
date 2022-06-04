@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'devbox',
-    'django.contrib.sites',
+    #'django.contrib.sites',
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework.permissions',
@@ -75,7 +75,7 @@ AUTHENTICATION_BACKENDS = (
 )
 
 SOCIALACCOUNT_PROVIDERS = {
-    'google': {
+    'google': { 
         'SCOPE': [
             'profile',
             'email',
@@ -125,13 +125,12 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'devbox',
-        'USER': 'root',
-        'PASSWORD': 'devbox',
+        'USER': 'devobx',
+        'PASSWORD': 'devboxpassword',
         'HOST': '127.0.0.1',
         'PORT': '3306',
     }
 }
-
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
 
@@ -180,7 +179,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 LOGIN_URL = '/login/'
 
-SITE_ID = 2
+SITE_ID = 1
 LOGIN_REDIRECT_URL = '/'
 
 # send_email

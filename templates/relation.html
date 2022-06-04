@@ -6,12 +6,10 @@
 
 {% block body %}
 <div class="all" style="margin-left: 100px;">
-  <form action ="/apis/v1/relations/create/" method="POST">
   <p>사용자 찾기</p>
-  <input type="text" id="searchUserName" name="id" placeholder="유저이름을 입력해주세요.">
+  <input type="text" id="searchUserName" name='id' placeholder="유저이름을 입력해주세요.">
     {% csrf_token %}
     <button id="search" name="username" class="btn-outline-danger" type="submit">검색</button>
-  </form> 
   <p><b id="searchResult"></b><span id="searchFollow" style="display: none;"> - <button></button></span></p>
   <hr>
 

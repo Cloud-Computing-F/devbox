@@ -30,7 +30,7 @@ urlpatterns = [
     path('login/', NonUserTemplateView.as_view(template_name='login.html'), name='login'),
     path('register/', NonUserTemplateView.as_view(template_name='register.html'), name='register'),
     path('relation/', RelationView.as_view(), name='contents_relation'),
-    path('relation/create/',RelationCreateView.as_view()),
+    
     path('apis/', include('apis.urls')),
     path("home/", include('devbox.urls')),
 ]
