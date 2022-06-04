@@ -1,6 +1,7 @@
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
+from django.conf import settings
 from devbox.models import Files, Folder, RecycleBins
 from .utilsViews import sort, download
 
