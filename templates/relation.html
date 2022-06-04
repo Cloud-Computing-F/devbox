@@ -1,39 +1,410 @@
 
-{% include "header.html" %}
-{% block head %}
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/dropzone@5.5.1/dist/dropzone.min.css">
-{% endblock %}
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css">
+    <link
+    rel="stylesheet"
+    href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+    />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/dropzone@5.5.1/dist/dropzone.min.css">
+
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <title>Devbox</title>
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Josefin+Sans:ital,wght@1,700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
+    @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+*{
+  list-style: none;
+  text-decoration: none;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Apple SD Gothic Neo', sans-serif;
+}
+
+body{
+  background: #f5f6fa;
+}
+
+.wrapper .sidebar{
+  background:
+  linear-gradient(135deg,#7780E0, #90B4F7, transparent);
+  position: fixed;
+  width: 240px;
+  height: 100%;
+  padding: 20px 0;
+  float: left;
+}
+
+.wrapper .sidebar .devbox{
+  text-align: center;
+}
+
+.wrapper .sidebar .devbox .title{
+  border: 0;
+  background-color:transparent;
+}
+
+.wrapper .sidebar .devbox .title .main_btn{
+  margin: 30px 5px 35px 0px;
+  width: 180px;
+  height: 75px;
+  }
+
+.wrapper .sidebar ul li a{
+  display: block;
+  padding: 16px 35px;
+  border-bottom: 1px solid #f1eded;
+  color: #f1eded;
+  font-size: 16px;
+  letter-spacing: 1.5px;
+  position: relative;
+}
+
+.wrapper .sidebar ul li a .icon{
+  color: white;
+  width: 35px;
+  display: inline-block;
+}
+
+.wrapper .sidebar ul li a:hover,
+.wrapper .sidebar ul li a.active{
+  color: #7780E0;
+
+  background:white;
+  border-right: 2px solid #BABEE0;
+}
+
+.wrapper .sidebar ul li a:hover .icon,
+.wrapper .sidebar ul li a.active .icon{
+  color: #7780E0;
+}
+
+.wrapper .sidebar ul li a:hover:before,
+.wrapper .sidebar ul li a.active:before{
+  display: block;
+}
+
+.wrapper .sidebar .item {
+  font-weight: 500;
+  font-size: 19px;
+  font-family: Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+}
+
+.main{
+  width: 80%;
+  height: 100%;
+  padding: 20px 0;
+  float: right;
+}
+
+.header {
+  width: 99%;
+  margin-bottom: 50px;
+  font-weight: 500;
+  font-size: 14.5px;
+  font-family: Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+}
+
+.header_right {
+  float:right;
+  margin: 5px 35px 50px 0px;
+  }
+
+.logout {
+  float: right;
+  margin: 0px 0px 0px 40px;
+  border: none;
+  width: 90px;
+  height: 40px;
+  border-radius: 5px;
+  background: #282862;
+  color: white;
+  font-weight: 800;
+  font-family: "Noto Sans KR", sans-serif;
+  box-shadow: 0px 2px 5px #cedfff;
+}
+.logout:focus {
+  outline: none;
+}
+
+.middle {
+  justify-content: space-between;
+  align-items: center;
+  width: 50%;
+  margin-left: -10px;
+}
+
+.middle_left {
+  float: left;
+}
+
+.middle_right {
+  display:inline-block;
+  margin: 7px 10px -30px 15px;
+}
+
+.find_user {
+    font-size: 20px;
+    font-weight: 550;
+    font-family: "Noto Sans KR", sans-serif;
+    margin: -15px 0px 10px -15px;
+    opacity: 0.8;
+}
+
+.search {
+  width: 330px;
+  height: 40px;
+  margin-left: -30px;
+  margin-bottom: -15px;
+  padding: 5px;
+  border: 1px solid #cccccc;
+  background-color: transparent;
+  border-radius: 5px;
+  font-weight: 500;
+  font-size: 14px;
+  font-family: "Noto Sans KR", sans-serif;
+  box-shadow: 0px 0px 4px #cacaca;
+  opacity: 0.7;
+}
+
+.fa-search {
+  color: grey;
+  font-size: 15px;
+  margin-right: 5px;
+}
+.input-search {
+  border: none;
+  background-color: transparent;
+  height: 25px;
+  transition: all 1s;
+  margin-top: 2px;
+  margin-left: 10px;
+  width: 280px;
+  font-weight: 550;
+  opacity: 0.;
+}
+.input-search:focus {
+  outline: none;
+}
+.input-search::placeholder {
+  font-size: 20px;
+  font-family: "Noto Sans KR", sans-serif;
+}
+
+.user-name {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.bottom {
+  width: 79%;
+  height: 100vh;
+  display: flex;
+  position: absolute;
+  margin-top: 35px;
+  margin-left: -10px;
+  line-height: 35px;
+}
+
+.bottom_left {
+  width: 50%;
+  height:100%;
+  display: flex;
+}
+
+.bottom_right {
+  width: 50%;
+  height:100%;
+  display: flex;
+  margin-left: 30px;
+}
+
+.left-box {
+  width: 100%;
+  height:98%;
+  border: none;
+  border-radius: 5px;
+  box-shadow: 0px 0px 5px #cacaca;
+  padding: 22px 30px 25px 30px;
+}
+
+.right-box {
+  width: 100%;
+  height:98%;
+  border: none;
+  border-radius: 5px;
+  box-shadow: 0px 0px 5px #cacaca;
+  padding: 22px 30px 25px 30px; 
+}
+
+.title{
+  font-size: 25px;
+  font-family: "Noto Sans KR", sans-serif;
+  font-weight: 550;
+  color: #555BA1;
+  opacity: 0.7;
+  margin-top: -2px;
+  margin-bottom: 20px;
+}
+
+.nowrap {
+  white-space: nowrap;
+}
+
+.list-group-item {
+    position: relative;
+    display: block;
+    padding: 10px 15px;
+    margin-bottom: -1px;
+    background-color: transparent;
+    border: 1px solid #ddd;
+}
+
+.btn {
+    display: inline-block;
+    padding: 6px 12px;
+    float: right;
+    font-size: 14px;
+    font-weight: 400;
+    color: white;
+    line-height: 1.42857143;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    -ms-touch-action: manipulation;
+    touch-action: manipulation;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    background-image: none;
+    background-color: #7780E0;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+
+.btn2 {
+    display: inline-block;
+    padding: 6px 12px;
+    font-size: 14px;
+    font-weight: 400;
+    color: white;
+    line-height: 1.42857143;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    -ms-touch-action: manipulation;
+    touch-action: manipulation;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    background-image: none;
+    background-color: #7780E0;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    margin-top: -5px;
+}
+
+.hr1{
+    border-top: 1px solid #f1eded;
+    color: #f1eded;
+    position: relative;
+}
+    </style>
+  </head>
 
 {% block body %}
-<div class="all" style="margin-left: 100px;">
-  <p>사용자 찾기</p>
-  <input type="text" id="searchUserName" name='id' placeholder="유저이름을 입력해주세요.">
-    {% csrf_token %}
-    <button id="search" name="username" class="btn-outline-danger" type="submit">검색</button>
-  <p><b id="searchResult"></b><span id="searchFollow" style="display: none;"> - <button></button></span></p>
-  <hr>
+<div class="wrapper">
+  <div class="sidebar">
+      <div class="devbox">
+          <a href="{% url 'contents_home' %}" class="title"><img class="main_btn" src="{%static 'KakaoTalk_20220601_145619966_01.png' %}"></a>
+      </div>
 
-  <h2>날 팔로우 하는 사람들</h2>
-  {% if followers  %}
-  <ul class="list-group">
-    {% for obj in followers %}
-      <li class="list-group-item col-md-6">
-        {{ obj.follower.username }}{% if obj.follower.id not in followees_ids %} - <button class="follow btn btn-outline-danger" data-user-id="{{ obj.follower.id }}">팔로우</button>{% endif %}
-      </li>
-    {% endfor %}
-  </ul>
-  {% endif %}
+      <div>
+          <ul>
+              <li>
+                  <div class="hr1"></div>
+                  <a class="item" href="{% url 'contents_home' %}">
+                      <span class="icon"><i class="fas fa-home"></i></span>내 파일
+                  </a>
+              </li>
+              <li>
+                <a class="item active" href="{% url 'contents_relation' %}">
+                    <span class="icon"><i class="fas fa-users"></i></span>팔로우
+                </a>
+              </li>
+              <li>
+                  <a class="item" href="{% url 'devbox:recyclebinDisplay' %}">
+                      <span class="icon"><i class="fas fa-trash"></i></span>휴지통
+                  </a>
+              </li>
+          </ul>
+      </div>
+  </div>
 
+  <div class="main">
+    <div class="header">
+        <div class="header_right">
+            <span>{{ request.user }}님 안녕하세요!</span>
+            <a>&nbsp&nbsp&nbsp</a>
+            <a href="javascript:void(0);" id="logout">로그아웃</a>
+        </div>
+    </div>
 
-  <h2>내가 팔로우 하는 사람들</h2>
-  {% if followees %}
-    <ul class="list-group">
-    {% for user in followees %}
-      <li class="list-group-item col-md-6">{{ user.username }} - <button class="unfollow btn btn-outline-danger" data-user-id="{{ user.id }}">언팔로우</button></li>
-    {% endfor %}
-    </ul>
-  {% endif %}
-</div>
+    <div class="middle">    
+      <div class="all" style="margin-left: 20px; margin-top:60px;">
+        <p class="find_user">"사용자 찾기"</p>
+        <div class="middle_left" style="white-space:nowrap;">
+          <div class="search">  
+            <input class="input-search" type="text" id="searchUserName" name='id' placeholder="유저ID를 입력해주세요.">
+              {% csrf_token %}
+              <button id="search" name="username" style="border:0;" type="submit"><i class="fas fa-search"></i></button>
+          </div>
+        </div>
+        <div class="middle_right">
+          <p><b id="searchResult"></b><span class="user-name" id="searchFollow" style="display: none;"><button class="btn2"></button></span></p>
+        </div>
+    </div>
+
+    <div class="bottom">
+      <div class="bottom_left">
+        <div class="left-box">
+          <h2 class="title">팔로워</h2>
+          {% if followers  %}
+          <ul class="list-group">
+            {% for obj in followers %}
+              <li class="list-group-item col-md-6">
+                {{ obj.follower.username }}{% if obj.follower.id not in followees_ids %}  <button class="follow btn btn-outline-danger" data-user-id="{{ obj.follower.id }}">팔로우</button>{% endif %}
+              </li>
+            {% endfor %}
+          </ul>
+          {% endif %}
+        </div>
+      </div>
+      <div class="bottom_right">
+        <div class="right-box">
+          <h2 class="title">팔로잉</h2>
+          {% if followees %}
+            <ul class="list-group">
+            {% for user in followees %}
+              <li class="list-group-item col-md-6">{{ user.username }} <button class="unfollow btn btn-outline-danger" data-user-id="{{ user.id }}">언팔로우</button></li>
+            {% endfor %}
+            </ul>
+          {% endif %}
+      </div>
 
 
   <script

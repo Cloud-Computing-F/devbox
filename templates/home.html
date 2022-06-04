@@ -123,6 +123,36 @@
     margin: 5px 35px 50px 0px;
     }
 
+    .middle {
+    justify-content: space-between;
+    align-items: center;
+    width: 98%;
+    }
+
+    .middle_left {
+    float: left;
+    margin: 40px 100px -20px -365px;
+    }
+    
+    .root_font {
+    margin-top: 50px;
+    opacity: 0.8;
+    font-weight: 550;
+    font-size: 20px;
+    font-family: Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+    }
+    a {
+    color: #555BA1;
+    text-decoration: none;
+    }   
+    
+    .middle_right {
+    float: right;
+    margin-bottom: 10px;
+    margin-top: 40px;
+    margin-right: -265px;
+    }
+    
     .search {
     width: 330px;
     height: 40px;
@@ -136,24 +166,6 @@
     font-family: "Noto Sans KR", sans-serif;
     box-shadow: 0px 0px 4px #cacaca;
     opacity: 0.7;
-    }
-
-    .middle {
-    justify-content: space-between;
-    align-items: center;
-    width: 98%;
-
-    }
-
-    .middle_left {
-    float: left;
-    margin: 40px 100px -20px -365px;
-    }
-
-    .middle_right {
-    float: right;
-    margin-bottom: 10px;
-    margin-top: 15px;
     }
 
     .fa-search {
@@ -273,7 +285,7 @@
     flex-direction: column;
     border: none;
     width: 99%;
-    height: 570px;
+    height: 100vh;
     border-radius: 5px;
     box-shadow: 0px 0px 5px #cacaca;
     padding: 22px 30px 25px 30px;
@@ -338,111 +350,160 @@
     display: none;
     }
 
+    .newf-modal {
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      background-color: white;
+      top: 30%;
+      margin: 0 auto;
+      left: 0;
+      right: 0;
+      width: 300px;
+      height: 230px;
+      border-radius: 10px;
+      box-shadow: 0px 0px 10px 1px #999;
+      animation: fadein 1s;
+      z-index: 10;
+      padding: 40px;
+    }
+    .newf-content {
+      margin-bottom: 20px;
+    }
+    .newf-input {
+      margin-bottom: 25px;
+      margin-top: 20px;
+      font-size: 16px;
+      border: none;
+      border-bottom: 1px solid #9cbeff;
+      width: 190px;
+    }
+    .newf-input:focus {
+      outline: none;
+      border-bottom: 1.5px solid #7780E0;
+    }
+
+    .modal-header {
+      padding: 15px;
+      border-bottom: 1px solid #e5e5e5;
+      margin-top: -10px;
+      text-align: center;
+    }
+
+    .modal-body {
+      position: relative;
+      padding: 15px;
+    }
+
+    .btn-ok,
+    .btn-cancel,
+    .btn-share-cancel,
+    .btn-share-ok {
+      font-size: 12px;
+      background-color: #7780E0;
+      border: none;
+      color: white;
+      border-radius: 5px;
+      width: 50px;
+      height: 30px;
+      float: right;   
+      margin-left: 7px;
+    }
+    .btn-cancel,
+    .btn-share-cancel {
+      background-color: white;
+      color: black;
+      border: 1px solid #7780E0;
+    }
+    .btn-ok:focus,
+    .btn-cancel:focus,
+    .btn-share-cancel,
+    .btn-share-ok {
+      outline: none;
+    }
     </style>
     </head>
 
     <body>
-        <!--모달 부분 (여기는 로직 수정 X, 디자인 수정 필요 O) 공유 모달 -->
-  <div
-  class="modal fade"
-  id="myModal"
-  tabindex="-1"
-  role="dialog"
-  aria-labelledby="myModalLabel"
->
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button
-          type="button"
-          class="close"
-          data-dismiss="modal"
-          aria-label="Close"
-        >
-          <span aria-hidden="true">&times;</span>
-        </button>
-        <h4 class="modal-title" id="myModalLabel">공유하기</h4>
-        <input type="textarea" id="copylink" style="width:500px"/>
-      </div>
-      <div class="modal-body">
-        <h4>이메일/사용자</h4>
-        <label
-          ><input type="radio" name="mode" value="email" checked />email
-        </label>
-        <label
-          ><input type="radio" name="mode" value="user" />user Id
-        </label>
-      </div>
-        <div class="modal-footer">
-          <form method="POST" action="{% url 'devbox:mailing'%}">
-            <input name="email_address" id="email_address" type="email" multiple placeholder="이메일을 입력하세요" required>
-            {% csrf_token %}
-            <input type="textarea" id="selected_target" name="selected_target"/>
-            <button class="btn btn-primary" type="submit" id="sendEmailBTN" style="height: 40px; width: 140px; background-color: #90B4F7;">
-              email로 보내기
-            </button>
-          </form>
-          <input name="to_user" id="to_user" type="textarea" placeholder="사용자를 입력하세요" required>
-          <button class="btn btn-primary" type="submit" data-dismiss="modal" id='sendUserBTN'  style="height: 40px; width: 150px; background-color: #90B4F7;">
-            사용자에게 보내기
-          </button>
-          <button type="button" class="btn btn-default" data-dismiss="modal">
-            닫기
-          </button> 
-        </div>
-    </div>
-  </div>
-</div>
-<!--모달 부분 끝 -->
-
-
-
-<!--폴더 업로드 모달 시작-->
-<div
-class="modal fade"
-id="folderModal"
-tabindex="-1"
-role="dialog"
-aria-labelledby="myModalLabel"
->
-<div class="modal-dialog" role="document">
-  <div class="modal-content">
-    <div class="modal-header">
-      <button
-        type="button"
-        class="close"
-        data-dismiss="modal"
-        aria-label="Close"
+      <!--모달 부분 (여기는 로직 수정 X, 디자인 수정 필요 O) 공유 모달 -->
+      <div
+      class="modal fade"
+      id="myModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="myModalLabel"
       >
-        <span aria-hidden="true">&times;</span>
-      </button>
-      <h4 class="modal-title" id="myModalLabel">폴더 만들기</h4>
-    </div>
-    <div class="modal-body">
-      <form action="{% url 'devbox:createFolder' current_folder_id %}" method="POST">
-        {% csrf_token %}
-      <input type="text" name="createFolderName">
-      <button type="submit">만들기</button>
-      </form>
-    </div>
-      <div class="modal-footer">
+          <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <button
+                      type="button"
+                      class="close"
+                      data-dismiss="modal"
+                      aria-label="Close"
+                      >
+                      <span aria-hidden="true">&times;</span>
+                      </button>
+                      <h4 class="modal-title" id="myModalLabel">공유하기</h4>
+                      <input type="textarea" id="copylink" style="width:500px"/>
+                  </div>
+                  <div class="modal-body">
+                  <h4>이메일 주소를 입력해보세요!</h4>
+                  <form method="POST" action="{% url 'devbox:mailing'%}">
+                      <input name="email_address" id="email_address" type="email" multiple placeholder="devbox@email.com" required>
+                      {% csrf_token %}
+                      <input type="textarea" id="selected_target" name="selected_target"/>
+                      <button class="btn btn-primary" type="submit" id="sendEmailBTN" style="height: 40px; width: 140px; background-color: #90B4F7;">
+                      전송하기
+                      </button>
+                    </form>
+                  </div>
+                  <div class="modal-footer">
+                  </div>
+              </div>
+          </div>
       </div>
-  </div>
-</div>
-</div>
-<!--폴더 업로드 모달 끝-->
+      <!--모달 부분 끝 -->
 
 
-        <!--수정 업로드 모달 시작-->
-        <div
+
+      <!--폴더 업로드 모달 시작-->
+      <div
+        class="modal fade"
+        id="folderModal"
+        tabindex="-1"
+        role="dialog"
+        aria-labelledby="myModalLabel"
+        >
+        <div class="newf-modal" role="document">
+          <div class="newf-content">
+            <h4 class="modal-title" style="margin-left: 10px;" id="myModalLabel">폴더 만들기</h4>
+            <div class="modal-body">
+              <form action="{% url 'devbox:createFolder' current_folder_id %}" method="POST">
+                {% csrf_token %}
+              <input class="newf-input" type="text" placeholder="새폴더">
+              <div class="interactive-btns">
+                <button type="button" class="btn-cancel" data-dismiss="modal" class="btn-cancel">취소</button>
+                <button button class="btn-ok" type="submit">확인</button>
+              </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--폴더 업로드 모달 끝-->
+
+
+      <!--수정 업로드 모달 시작-->
+      <div
         class="modal fade"
         id="editModal"
         tabindex="-1"
         role="dialog"
         aria-labelledby="myModalLabel"
         >
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
+          <div class="newf_modal" role="document">
+              <div class="newf-content">
                 <div class="modal-header">
                 <button
                 type="button"
@@ -452,7 +513,7 @@ aria-labelledby="myModalLabel"
                 >
                 <span aria-hidden="true">&times;</span>
                 </button>
-                <h4 class="modal-title" id="myModalLabel">파일 및 폴더 이름 수정하기</h4>
+                <h4 class="modal-title" id="myModalLabel">폴더 이름 수정하기</h4>
                 </div>
                 <div class="modal-body">
                 <form action="{% url 'devbox:renameFileAndFolder' current_folder_id %}" method="POST">
@@ -464,11 +525,33 @@ aria-labelledby="myModalLabel"
                 </div>
                 <div class="modal-footer">
                 </div>
-                </div>
+              </div>
+          </div>
+      </div>
+      <!--수정 업로드 모달 끝-->
+      <div
+      class="modal fade"
+      id="editModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="myModalLabel"
+      >
+          <div class="newf_modal" role="document">
+            <div class="newf-content">
+              <h4 class="modal-title" id="myModalLabel">폴더 이름 수정하기</h4>
+              <div class="modal-body">
+              <form action="{% url 'devbox:renameFileAndFolder' current_folder_id %}" method="POST">
+                {% csrf_token %}
+              <input type="textarea" id="rename_item" name="selected_folder"/>
+              <input class="newf-input" type="text" name="renameFileAndFolderName" placeholder="수정할 이름">
+              <div class="interactive-btns"></div>  
+                <button class="btn-ok" type="submit">수정</button>
+              </form>
+              </form>
+              </div>
             </div>
-        </div>
-        <!--수정 업로드 모달 끝-->
-
+          </div>
+      </div>
 
 
         <div class="wrapper">
@@ -486,9 +569,9 @@ aria-labelledby="myModalLabel"
                             </a>
                         </li>
                         <li>
-                            <a class="item">
-                                <span class="icon"><i class="fas fa-user-friends"></i></span>공유 파일
-                            </a>
+                          <a class="item" href="{% url 'contents_relation' %}">
+                              <span class="icon"><i class="fas fa-users"></i></span>팔로우
+                          </a>
                         </li>
                         <li>
                             <a class="item" href="{% url 'devbox:recyclebinDisplay' %}">
@@ -502,7 +585,6 @@ aria-labelledby="myModalLabel"
             <div class="main">
                 <div class="header">
                     <div class="header_left">
-                    <!--search 자리 옮긴 이유 : 얘는 따로 input을 받도록 설계되어있어서, table 사이에 있으니까 검색기능도, table 기능도 작동을 안함-->
                         <div class="search">
                             <form  action="{% url 'devbox:search'%}" method="GET">
                                 <input class="input-search" name='search_input' type='text' placeholder="Search" required>
@@ -513,13 +595,18 @@ aria-labelledby="myModalLabel"
                     <div class="header_right">
                         <span>{{ request.user }}님 안녕하세요!</span>
                         <a>&nbsp&nbsp&nbsp</a>
-                        <a href="{% url 'contents_relation' %}">친구목록</a>
-                        <a>&nbsp&nbsp&nbsp</a>
                         <a href="javascript:void(0);" id="logout">로그아웃</a>
                     </div>
                 </div>
 
                 <div class="middle">
+                    <div class="middle_left root_font">
+                              <!-- directory -->
+                        <a href="{% url 'devbox:home' %}">root</a>
+                        {% for p_folder in parentFolders %}
+                        <span class="root_font">></span> <a href="{% url 'devbox:changeDirectory' p_folder.id %}"> {{p_folder.folderName}} </a>
+                        {% endfor %}
+                    </div>
                     <div class="middle_right">
                         <div class="btns">
                             {% csrf_token %}
@@ -554,8 +641,7 @@ aria-labelledby="myModalLabel"
                                 <button type="button"
                                     class="btn"
                                     data-toggle="modal"
-                                    data-target="#editModal"
-                                    
+                                    data-target="#editModal" 
                                 >수정
                                 </button>
               

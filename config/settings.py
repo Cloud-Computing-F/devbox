@@ -125,8 +125,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'devbox',
-        'USER': 'devobx',
-        'PASSWORD': 'devboxpassword',
+        'USER': 'root',
+        'PASSWORD': 'rhgPdus00@!',
         'HOST': '127.0.0.1',
         'PORT': '3306',
     }

@@ -142,10 +142,12 @@ body{
 }
 
 .middle_right {
-  float: right;
-  margin-bottom: 10px;
-  margin-top: 15px;
-}
+    float: right;
+    margin-bottom: 10px;
+    margin-top: 40px;
+    margin-right: -265px;
+    }
+    
 
 .logout {
   float: right;
@@ -245,6 +247,24 @@ th, td {
   display: none;
 }
 
+.btn {
+  border: none;
+  width: 90px;
+  height: 40px;
+  border-radius: 5px;
+  background-color: transparent;
+  font-weight: 700;
+  font-size: 16.5px;
+  font-family: Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+  letter-spacing: 1.5px;
+  box-shadow: 0px 0px 5px #cacaca;
+  margin-right: 8px;
+  opacity: 0.9;
+}
+.btn:focus {
+  outline: none;
+}
+
     </style>
 </head>
 
@@ -265,10 +285,9 @@ th, td {
                         </a> 
                   </li>
                   <li>
-                      <a class="item">
-                        <span class="icon"><i class="fas fa-user-friends"></i></span>
-                        공유 파일
-                      </a>
+                    <a class="item" href="{% url 'contents_relation' %}">
+                        <span class="icon"><i class="fas fa-users"></i></span>팔로우
+                    </a>
                   </li>
                   <li>
                       <a class="item">
@@ -285,8 +304,6 @@ th, td {
                 <div class="header_right">
                   <span>{{ request.user }}님 안녕하세요!</span>
                   <a>&nbsp&nbsp&nbsp</a>
-                  <a href="{% url 'contents_relation' %}">친구목록</a>
-                  <a>&nbsp&nbsp&nbsp</a>
                   <a href="javascript:void(0);" id="logout">로그아웃</a>
                 </div>
               </div>
@@ -297,16 +314,25 @@ th, td {
                 </div>
                 <div class="middle_right">
                   <div class="btns">
-                    {% csrf_token %}
-                    <form method="POST">
-                      <!-- 다운로드 -->
-                      <button class="btn" type="submit" formaction="{% url 'devbox:downloadFile' current_folder_id %}">다운로드</button>
-                        {% csrf_token%}
-                      <button class="btn" type="submit" formaction="{% url 'devbox:renameFileAndFolder' current_folder_id %}">수정</button>
+                      <form method="POST">
+                          <!-- 다운로드 -->
+                          <button class="btn" type="submit" formaction="{% url 'devbox:downloadFile' current_folder_id %}">다운로드</button>
 
-                      <button class="btn" type="submit" formaction="{% url 'devbox:deleteFileAndFolder' current_folder_id %}">삭제</button>
+                          <!-- 수정 버튼 -->
+                          {% csrf_token%}
+                        
+                          <button type="button"
+                              class="btn"
+                              data-toggle="modal"
+                              data-target="#editModal"
+                              
+                          >수정
+                          </button>
+        
+                          <!-- 삭제 -->
+                          <button class="btn" type="submit" formaction="{% url 'devbox:deleteFileAndFolder' current_folder_id %}">삭제</button>
                   </div>
-                </div> 
+              </div>
               </div>
 
               <div class="table">
