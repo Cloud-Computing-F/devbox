@@ -340,8 +340,9 @@
 
     </style>
     </head>
+
     <body>
-        <!--모달 부분 (여기는 로직 수정 X, 디자인 수정 필요 O)-->
+        <!--모달 부분 (여기는 로직 수정 X, 디자인 수정 필요 O) 공유 모달 -->
         <div
         class="modal fade"
         id="myModal"
@@ -364,21 +365,17 @@
                         <input type="textarea" id="copylink" style="width:500px"/>
                     </div>
                     <div class="modal-body">
-                    <h4>이메일/사용자</h4>
-                        <label
-                        ><input type="radio" name="mode" value="email" checked />email
-                        </label>
-                        <label
-                        ><input type="radio" name="mode" value="user" />user Id
-                        </label>
+                        <h4>이메일/사용자</h4>
+                        <label><input type="radio" name="mode" value="email" checked />email</label>
+                        <label><input type="radio" name="mode" value="user" />user Id</label>
                     </div>
                     <div class="modal-footer">
                         <form method="POST" action="{% url 'devbox:mailing'%}">
-                        <input name="email_address" id="email_address" type="email" multiple placeholder="이메일을 입력하세요" required>
-                        {% csrf_token %}
-                        <input type="textarea" id="selected_target" name="selected_target"/>
-                        <button class="btn btn-primary" type="submit" id="sendEmailBTN" style="height: 40px; width: 140px; background-color: #90B4F7;">
-                        email로 보내기
+                            <input name="email_address" id="email_address" type="email" multiple placeholder="이메일을 입력하세요" required>
+                            {% csrf_token %}
+                            <input type="textarea" id="selected_target" name="selected_target"/>
+                            <button class="btn btn-primary" type="submit" id="sendEmailBTN" style="height: 40px; width: 140px; background-color: #90B4F7;">
+                            email로 보내기
                         </button>
                         </form>
                         <input name="to_user" id="to_user" type="textarea" placeholder="사용자를 입력하세요" required>
@@ -393,6 +390,77 @@
             </div>
         </div>
         <!--모달 부분 끝 -->
+
+        <!--폴더 업로드 모달 시작-->
+        <div
+        class="modal fade"
+        id="folderModal"
+        tabindex="-1"
+        role="dialog"
+        aria-labelledby="myModalLabel"
+        >
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button
+                        type="button"
+                        class="close"
+                        data-dismiss="modal"
+                        aria-label="Close"
+                        >
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title" id="myModalLabel">폴더 만들기</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form action="{% url 'devbox:createFolder' current_folder_id %}" method="POST">
+                            {% csrf_token %}
+                            <input type="text" name="createFolderName">
+                            <button type="submit">만들기</button>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--폴더 업로드 모달 끝-->
+
+        <!--수정 업로드 모달 시작-->
+        <div
+        class="modal fade"
+        id="editModal"
+        tabindex="-1"
+        role="dialog"
+        aria-labelledby="myModalLabel"
+        >
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button
+                        type="button"
+                        class="close"
+                        data-dismiss="modal"
+                        aria-label="Close"
+                        >
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title" id="myModalLabel">파일 및 폴더 이름 수정하기</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form action="{% url 'devbox:renameFileAndFolder' current_folder_id %}" method="POST">
+                            {% csrf_token %}
+                            <input type="textarea" id="rename_item" name="selected_folder"/>
+                            <input type="text" name="renameFileAndFolderName" placeholder="수정할 이름">
+                            <button type="submit">수정</button>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--수정 업로드 모달 끝-->
 
         <div class="wrapper">
             <div class="sidebar">
@@ -443,13 +511,21 @@
                 </div>
 
                 <div class="middle">
+                    <div class="middle_left">
+                        <!-- directory -->
+                        <a href="{% url 'devbox:home' %}">root</a>
+                        {% for p_folder in parentFolders %}
+                        > <a href="{% url 'devbox:changeDirectory' p_folder.id %}"> {{p_folder.folderName}} </a>
+                        {% endfor %}
+                    </div>
                     <div class="middle_right">
                         <div class="btns">
                             {% csrf_token %}
-                            <!-- 폴더 생성 : input 이 필요해서 이렇게 작성했습니다.-->
-                            <form action="{% url 'devbox:createFolder' current_folder_id %}" method="POST">
-                                {% csrf_token %}
-                                <button class="btn" type="submit">새 폴더</button>
+                                <button type="button"
+                                    class="btn"
+                                    data-toggle="modal"
+                                    data-target="#folderModal">새 폴더
+                                </button>
                             </form>
                             <a>&nbsp</a>
 
@@ -464,13 +540,17 @@
 
                             <form method="POST">
                                 <!-- 다운로드 -->
-                                {% csrf_token%}
-                                <button class="btn" type="submit" id="downloadFile" formaction="{% url 'devbox:downloadFile' current_folder_id %}">다운로드</button>
+                                <button class="btn" type="submit" formaction="{% url 'devbox:downloadFile' current_folder_id %}">다운로드</button>
 
-                                <!-- 기존 수정 버튼 옆에 input이 있어서 작성했습니다 : 무슨 용도인지 잘 모르겠어요 -->
+                                <!-- 수정 버튼 -->
                                 {% csrf_token%}
-                                <button class="btn" type="submit" formaction="{% url 'devbox:renameFileAndFolder' current_folder_id %}">수정</button>
-
+                                <button type="button"
+                                    class="btn"
+                                    data-toggle="modal"
+                                    data-target="#editModal"
+                                >수정
+                                </button>
+              
                                 <!-- 삭제 -->
                                 <button class="btn" type="submit" formaction="{% url 'devbox:deleteFileAndFolder' current_folder_id %}">삭제</button>
                         </div>
@@ -480,58 +560,50 @@
                 <div class="table">
                     <div class="input_table">
                         <table>
-                            <thead>
-                                <tr>
-                                    <th class="table-column-check">선택</th>
-                                    <th class="table-column-name">파일 이름</th>
-                                    <th class="table-column-date">업로드 날짜</th>
-                                    <th class="table-column-size">파일 크기</th>
-                                    <th class="table-column-size">공유</th>
-                                </tr>
-                            </thead>
+                            <tr>
+                                <th class="table-column-check">선택</th>
+                                <th class="table-column-name">파일 이름</th>
+                                <th class="table-column-date">업로드 날짜</th>
+                                <th class="table-column-size">파일 크기</th>
+                                <th class="table-column-size">공유</th>
+                            </tr>
 
-                            <tbody>
+                            {% for folder in folders %}
+                            <tr>
+                                <td><label><input type="checkbox" name="selected_folder" value="{{ folder.id }}"></label></td>
+                                <td><a href="{% url 'devbox:changeDirectory' folder.id %}">{{ folder.get_foldername }}</a></td>
+                                <td>{{ folder.dateTimeOfUpload }}</td>
+                                <td></td>
+                                <td><button type="button"
+                                    class="share_btn"
+                                    data-toggle="modal"
+                                    data-target="#myModal"
+                                    data-sharetarget="{{ folder.uuid }}"
+                                  >
+                                <i class="fas fa-share"></i>
+                                </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
 
-
-
-                                {% for folder in folders %}
-                                <tr>
-                                    <td><label><input type="checkbox" name="selected_folder" value="{{ folder.id }}"></label></td>
-                                    <td><a href="{% url 'devbox:changeDirectory' folder.id %}">{{ folder.get_foldername }}</a></td>
-                                    <td>{{ folder.dateTimeOfUpload }}</td>
-                                    <td></td>
-                                    <td><button type="button"
-                                        class="share_btn"
-                                        data-toggle="modal"
-                                        data-target="#myModal"
-                                        data-sharetarget="{{ folder.uuid }}">
-                                    <i class="fas fa-share"></i>
-                                    </button>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-
-                                {% for file in files %}
-                                <tr>
-                                    <td><label><input type="checkbox" name="selected_file" value="{{ file.id }}"></label></td>
-                                    <td>{{ file.fileName }}</td>
-                                    <td>{{ file.dateTimeOfUpload }}</td>
-                                    <td>{{ file.fileSize|filesizeformat }}</td>
-                                    <td><button type="button"
-                                        class="share_btn"
-                                        data-toggle="modal"
-                                        data-target="#myModal"
-                                        data-sharefile="{{ file.uuid }}">
-                                    <i class="fas fa-share"></i>
-                                    </button>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-
-
-
-                            </tbody>
+                            {% for file in files %}
+                            <tr>
+                                <td><label><input type="checkbox" name="selected_file" value="{{ file.id }}"></label></td>
+                                <td>{{ file.fileName }}</td>
+                                <td>{{ file.dateTimeOfUpload }}</td>
+                                <td>{{ file.fileSize|filesizeformat }}</td>
+                                <td><button type="button"
+                                    class="share_btn"
+                                    data-toggle="modal"
+                                    data-target="#myModal"
+                                    data-sharefile="{{ file.uuid }}">
+                                <i class="fas fa-share"></i>
+                                </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
                         </table>
+                        </form>
                     </div>
                 </div>
             </div>
