@@ -7,12 +7,35 @@ from django.db import IntegrityError
 from django.core.validators import validate_email, ValidationError
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from rest_framework.authtoken.models import Token
-from django.views.generic.base import TemplateView
-from django.shortcuts import render,redirect
+from django.conf import settings
+from django.shortcuts import redirect
+from contents.models import FollowRelation, Bucket
+import boto3
+import botocore.exceptions
+import string
+import random
 
 
-from contents.models import Content, FollowRelation
+AWS_ACCESS_KEY_ID = getattr(settings, "AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = getattr(settings, "AWS_SECRET_ACCESS_KEY")
+s3 = boto3.client('s3',
+                  aws_access_key_id=AWS_ACCESS_KEY_ID,
+                  aws_secret_access_key=AWS_SECRET_ACCESS_KEY)
+AWS_REGION = settings.AWS_REGION
+
+
+def get_boto_bucket():
+    response = s3.list_buckets()
+    print(response)
+    return response["Buckets"]
+
+
+def random_bucket_name(length):
+    result = ""
+    string_pool = string.ascii_lowercase
+    for i in range(length):
+        result += random.choice(string_pool)
+    return result
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -63,11 +86,29 @@ class UserCreateView(BaseView):
             validate_email(email)
         except ValidationError:
             return self.response(message='올바른 이메일을 입력해주세요.', status=400)
-
         try:
             user = User.objects.create_user(username, email, password)
+            bucketname = random_bucket_name(30)
+            bucket = Bucket(
+                userName=username,
+                bucketName=bucketname,
+            )
+            bucket.save()
         except IntegrityError:
             return self.response(message='이미 존재하는 아이디입니다.', status=400)
+
+        try:
+            s3.create_bucket(
+                Bucket=bucketname,
+                CreateBucketConfiguration={
+                    'LocationConstraint': AWS_REGION
+                }
+            )
+        except botocore.exceptions.ClientError as e:
+            if e.response['Error']['Code'] == 'BucketAlreadyOwnedByYou':
+                print("Bucket already exists. skipping..")
+            else:
+                print(e)
 
         return self.response({'user.id': user.id})
 
@@ -77,10 +118,7 @@ class RelationCreateView(BaseView):
 
     def post(self, request):
         try:
-            user_id= request.POST.get('id','')
-            #user_id = User.objects.get(username=username)
-            
-            #user_id = user_id.id
+            user_id = request.POST.get('id', '')
         except ValueError:
             return self.response(message='잘못된 요청입니다.', status=400)
 
@@ -101,13 +139,12 @@ class RelationCreateView(BaseView):
         return redirect("contents_relation")
 
 
-
 @method_decorator(login_required, name='dispatch')
 class RelationDeleteView(BaseView):
 
     def post(self, request):
         try:
-            user_id = request.POST.get('id','')
+            user_id = request.POST.get('id', '')
         except ValueError:
             return self.response(message='잘못된 요청입니다.', status=400)
 
@@ -129,7 +166,6 @@ class RelationDeleteView(BaseView):
 
 
 class UserGetView(BaseView):
-
     def get(self, request):
         username = request.GET.get('username', '').strip()
         try:
@@ -137,4 +173,3 @@ class UserGetView(BaseView):
         except User.DoesNotExist:
             self.response(message='사용자를 찾을 수 없습니다.', status=404)
         return self.response({'username': username, 'email': user.email, 'id': user.id})
-    

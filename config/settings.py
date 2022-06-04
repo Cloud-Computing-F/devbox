@@ -13,10 +13,16 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 from pathlib import Path
 import os
 import pymysql
+import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# 환경변수 설정
+env = environ.Env(DEBUG=(bool, True))
+environ.Env.read_env(
+    env_file=os.path.join(BASE_DIR, '.env')
+)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
@@ -127,7 +133,7 @@ DATABASES = {
         'NAME': 'devbox',
         'USER': 'devbox',
         'PASSWORD': 'devboxpassword',
-        'HOST': '127.0.0.1',
+        'HOST': 'devbox.c6uy40z5qfs0.ap-northeast-2.rds.amazonaws.com',
         'PORT': '3306',
     }
 }
@@ -179,13 +185,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+# Login
 LOGIN_URL = '/login/'
-
 SITE_ID = 1
 LOGIN_REDIRECT_URL = '/'
 
 # send_email
-
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.googlemail.com'
 EMAIL_USE_TLS = True
@@ -194,5 +199,19 @@ EMAIL_HOST_USER = 'devbox0514@gmail.com'
 EMAIL_HOST_PASSWORD = 'cloudcom1052@'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
 INTERNAL_IPS = ['127.0.0.1']
+
+# aws s3 연동
+AWS_REGION = env('AWS_REGION')
+AWS_STORAGE_BUCKET_NAME = env('AWS_STORAGE_BUCKET_NAME')
+AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY')
+
+AWS_QUERYSTRING_AUTH = False
+AWS_S3_HOST = 's3.%s.amazonaws.com' % AWS_REGION
+AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
+
+# Media Setting(Media 파일이 프로젝트에서 업로드되는 파일의미)
+AWS_LOCATION='media'
+MEDIA_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, AWS_LOCATION)
+DEFAULT_FILE_STORAGE = 'config.media_storage.MediaStorage'
