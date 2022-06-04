@@ -2,7 +2,8 @@ from .utilsViews import search, sort, download
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 
-#파일 및 폴더 검색
+
+# 파일 및 폴더 검색
 def searchFileAndFolder(request):
     template = 'search_result.html'
     if request.method == "GET":

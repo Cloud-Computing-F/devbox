@@ -5,11 +5,10 @@ import uuid
 
 
 class Folder(models.Model):
-    folderName = models.CharField(
-        max_length=100, default=now().strftime("%Y%m%d%H%M%S"))
+    userName = models.CharField(max_length=100, null=True)
+    folderName = models.CharField(max_length=100, default=now().strftime("%Y%m%d%H%M%S"))
     dateTimeOfUpload = models.DateTimeField(auto_now=True)
-    parent = models.ForeignKey(
-        'self', on_delete=models.CASCADE, related_name="child_folder", null=True, blank=True)
+    parent = models.ForeignKey('self', on_delete=models.CASCADE, related_name="child_folder", null=True, blank=True)
     uuid = models.UUIDField(default=uuid.uuid4, unique=True)
 
     def get_foldername(self):
@@ -17,13 +16,12 @@ class Folder(models.Model):
 
 
 class Files(models.Model):
-    fileName = models.CharField(
-        max_length=100, default=now().strftime("%Y%m%d%H%M%S"))
+    userName = models.CharField(max_length=100, null=True)
+    fileName = models.CharField(max_length=100, default=now().strftime("%Y%m%d%H%M%S"))
     fileSize = models.IntegerField(default=0)
     uploadedFile = models.FileField(upload_to="UploadedFiles/")
     dateTimeOfUpload = models.DateTimeField(auto_now=True)
-    parent = models.ForeignKey(
-        Folder, on_delete=models.CASCADE, related_name="child_files", null=True, blank=True)
+    parent = models.ForeignKey(Folder, on_delete=models.CASCADE, related_name="child_files", null=True, blank=True)
     uuid = models.UUIDField(default=uuid.uuid4, unique=True)
 
     def get_filename(self):

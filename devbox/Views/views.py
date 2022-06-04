@@ -2,8 +2,22 @@ from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
+from django.db.models import Q
 from devbox.models import Files, Folder, RecycleBins
+from contents.models import Bucket
 from .utilsViews import sort, download
+import boto3
+import time
+
+
+s3 = boto3.client('s3',
+                  aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+                  aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY)
+
+
+def get_bucket(request):
+    bucketName = Bucket.objects.get(userName=request.user).bucketName
+    return bucketName
 
 
 # Get parent folder name
@@ -21,8 +35,13 @@ def get_parent_folder_name(pk):
 
 # display file / folder
 def display_file_and_folder(request, pk):
-    files = list(Files.objects.filter(parent_id=pk if pk != 0 else None).order_by("fileName"))
-    folders = list(Folder.objects.filter(parent_id=pk if pk != 0 else None).order_by("folderName"))
+    get_bucket(request)
+    q = Q()
+    q &= Q(userName=request.user)
+    q &= Q(parent_id=pk if pk != 0 else None)
+
+    files = list(Files.objects.filter(q).order_by("fileName"))
+    folders = list(Folder.objects.filter(q).order_by("folderName"))
 
     not_deleted_files = []
     for file in files:
@@ -56,30 +75,36 @@ def change_directory(request, pk):
 @csrf_exempt
 def uploadFile(request, pk):
     if request.method == "POST":
-        selected = request.FILES["file"]
-        if len(selected) >= 1:
-            duplicated_file = Files.objects.filter(fileName=selected.name, parent_id=pk if pk != 0 else None)
-            if len(duplicated_file) == 0:
-                file = Files(
-                    uploadedFile=selected,
-                    fileName=selected.name,
-                    fileSize=selected.size,
-                    parent_id=pk if pk != 0 else None,
-                )
-                file.save()
+        for selected in request.FILES.getlist("file"):
+            if len(selected) >= 1:
+                q = Q()
+                q &= Q(userName=request.user)
+                q &= Q(fileName=selected.name)
+                q &= Q(parent_id=pk if pk != 0 else None)
+                duplicated_file = Files.objects.filter(q)
 
-        elif len(selected) < 1:
-            print("업로드 할 파일을 선택해 주세요")
+                if len(duplicated_file) == 0:
+                    file = Files(
+                        userName=request.user,
+                        uploadedFile=selected,
+                        fileName=selected.name,
+                        fileSize=selected.size,
+                        parent_id=pk if pk != 0 else None,
+                    )
+                    file.save()
+                    time.sleep(2)
+                    s3.upload_file(f'./media/UploadedFiles/{selected.name}',
+                                   get_bucket(request), str(file.uuid))
 
-    return JsonResponse({
-        'result': 'Upload Complete!'
-    }, status=201)
+            elif len(selected) < 1:
+                print("업로드 할 파일을 선택해 주세요")
+
+    return redirect("devbox:changeDirectory", pk)
 
 
 # 파일 다운로드
 @csrf_exempt
 def downloadFile(request, pk):
-    print("내 목소리가 들리니")
     if request.method == "POST":
         selected = request.POST.getlist("selected_file")
 
@@ -90,7 +115,7 @@ def downloadFile(request, pk):
         # 파일 선택 안함 예외 처리
         elif len(selected) < 1:
             print("다운로드할 파일을 선택해 주세요")
-            return redirect("devbox:search", 0)
+            return redirect("devbox:changeDirectory", pk)
 
 
 # 폴더 생성
@@ -104,6 +129,7 @@ def createFolder(request, pk):
             # 폴더 생성
             if len(duplicated_folder) == 0:
                 folder = Folder(
+                    userName=request.user,
                     folderName=folderName,
                     parent_id=pk if pk != 0 else None,
                 )

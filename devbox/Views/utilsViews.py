@@ -21,8 +21,7 @@ def download(selected):
                 file_path = os.path.basename(f"media/{file.uploadedFile}")
                 myzip.write(f"media/UploadedFiles/{file_path}", file.fileName)
 
-        response = HttpResponse(byte_data.getvalue(),
-                                content_type="application/force-download")
+        response = HttpResponse(byte_data.getvalue(),content_type="application/force-download")
         response['Content-Disposition'] = f'attachment; filename={zip_name}.zip'
         response['Content-Length'] = byte_data.tell()
         return response
@@ -31,11 +30,8 @@ def download(selected):
     elif len(selected) == 1:
         file = Files.objects.get(id=selected[0])
         file_path = os.path.basename(f"media/{file.uploadedFile}")
-        file_system = FileSystemStorage(
-            os.path.abspath("media/UploadedFiles/"))
-
-        response = FileResponse(file_system.open(
-            file_path), content_type='application/force-download')
+        file_system = FileSystemStorage(os.path.abspath("media/UploadedFiles/"))
+        response = FileResponse(file_system.open(file_path), content_type='application/force-download')
         response['Content-Disposition'] = f'attachment; filename="{file.fileName}"'
         return response
 
@@ -44,17 +40,15 @@ def download(selected):
 def search(query):
     search_folder = Q(folderName__icontains=query)
     search_file = Q(fileName__icontains=query)
-    obj_folders = Folder.objects.filter(
-        search_folder).distinct().order_by('folderName')
-    obj_files = Files.objects.filter(
-        search_file).distinct().order_by('fileName')
+    obj_folders = Folder.objects.filter(search_folder).distinct().order_by('folderName')
+    obj_files = Files.objects.filter(search_file).distinct().order_by('fileName')
     resSum = len(obj_files) + len(obj_folders)
     context = {
         'query': query,
         'obj_files': obj_files,
         'obj_folders': obj_folders,
         'resSum': resSum,
-        'current_folder_id':0,
+        'current_folder_id': 0,
     }
     return context
 
