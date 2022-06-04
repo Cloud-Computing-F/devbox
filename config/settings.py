@@ -12,17 +12,22 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 
 from pathlib import Path
 import os
+import environ
 import pymysql
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
+# 환경변수 설정
+env = environ.Env(DEBUG=(bool, True))
+environ.Env.read_env(
+    env_file=os.path.join(BASE_DIR, '.env')
+)
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-w9bdgf$o!^iz&_u96u9c_6rmy1qf!5mud9w4jj(^7$5d0x9*pw'
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -44,6 +49,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'rest_framework.permissions',
     'rest_framework.decorators',
+    'storages',
 ]
 
 INSTALLED_APPS += [
@@ -155,7 +161,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
 
 LANGUAGE_CODE = 'ko-KR'
-     
+
 TIME_ZONE = 'UTC'
 
 USE_I18N = True
@@ -166,8 +172,6 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
-STATIC_URL = '/static/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'static')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
@@ -175,8 +179,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'static')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Media files
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 
 LOGIN_URL = '/login/'
 
@@ -189,9 +192,37 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.googlemail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'devbox0514@gmail.com'
-EMAIL_HOST_PASSWORD = 'cloudcom1052@'
+EMAIL_HOST_USER = env('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 INTERNAL_IPS = ['127.0.0.1']
+
+if DEBUG:
+    STATIC_URL = '/static/'
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'static')
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+else:
+    # aws s3 연동
+    AWS_REGION = env('AWS_REGION')
+    AWS_STORAGE_BUCKET_NAME = env('AWS_STORAGE_BUCKET_NAME')
+    AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID')
+    AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY')
+
+    AWS_QUERYSTRING_AUTH = False
+    AWS_S3_HOST = 's3.%s.amazonaws.com' % AWS_REGION
+    AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
+
+    # Static Setting
+    STATIC_URL = "https://%s/" % AWS_S3_CUSTOM_DOMAIN
+    STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+
+    # Media Setting(Media 파일이 프로젝트에서 업로드되는 파일의미)
+    MEDIA_URL = "https://%s/" % AWS_S3_CUSTOM_DOMAIN
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+
+    # Root Setting/ 애매
+    #STATIC_ROOT = '%s/static' % STORAGE_PATH
+    #MEDIA_ROOT = '%s/media' % STORAGE_PATH
