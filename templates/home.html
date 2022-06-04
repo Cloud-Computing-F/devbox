@@ -433,41 +433,41 @@ aria-labelledby="myModalLabel"
 <!--폴더 업로드 모달 끝-->
 
 
-<!--수정 업로드 모달 시작-->
-<div
-class="modal fade"
-id="editModal"
-tabindex="-1"
-role="dialog"
-aria-labelledby="myModalLabel"
->
-<div class="modal-dialog" role="document">
-  <div class="modal-content">
-    <div class="modal-header">
-      <button
-        type="button"
-        class="close"
-        data-dismiss="modal"
-        aria-label="Close"
-      >
-        <span aria-hidden="true">&times;</span>
-      </button>
-      <h4 class="modal-title" id="myModalLabel">파일 및 폴더 이름 수정하기</h4>
-    </div>
-    <div class="modal-body">
-      <form action="{% url 'devbox:renameFileAndFolder' current_folder_id %}" method="POST">
-        {% csrf_token %}
-        <input type="textarea" id="rename_item" name="selected_folder"/>
-        <input type="text" name="renameFileAndFolderName" placeholder="수정할 이름">
-      <button type="submit">수정</button>
-      </form>
-    </div>
-      <div class="modal-footer">
-      </div>
-  </div>
-</div>
-</div>
-<!--수정 업로드 모달 끝-->
+        <!--수정 업로드 모달 시작-->
+        <div
+        class="modal fade"
+        id="editModal"
+        tabindex="-1"
+        role="dialog"
+        aria-labelledby="myModalLabel"
+        >
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                <div class="modal-header">
+                <button
+                type="button"
+                class="close"
+                data-dismiss="modal"
+                aria-label="Close"
+                >
+                <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">파일 및 폴더 이름 수정하기</h4>
+                </div>
+                <div class="modal-body">
+                <form action="{% url 'devbox:renameFileAndFolder' current_folder_id %}" method="POST">
+                {% csrf_token %}
+                <input type="textarea" id="rename_item" name="selected_folder"/>
+                <input type="text" name="renameFileAndFolderName" placeholder="수정할 이름">
+                <button type="submit">수정</button>
+                </form>
+                </div>
+                <div class="modal-footer">
+                </div>
+                </div>
+            </div>
+        </div>
+        <!--수정 업로드 모달 끝-->
 
 
 
@@ -520,18 +520,6 @@ aria-labelledby="myModalLabel"
                 </div>
 
                 <div class="middle">
-                    <div class="middle_left">
-                        <form method="GET" action="{% url 'devbox:sortFileAndFolder' current_folder_id %}">
-                            <div class="col-4">
-                                <select class="box-select" id="sort" name="sort">
-                                    <option value="title" , name="title">이름순</option>
-                                    <option value="size" ,name="size">크기순</option>
-                                    <option value="recent" ,name="recent">최신순</option>
-                                </select>
-                                <button class="sort_btn" type="submit">정렬</button>
-                            </div>
-                        </form>
-                    </div>
                     <div class="middle_right">
                         <div class="btns">
                             {% csrf_token %}
@@ -656,12 +644,12 @@ aria-labelledby="myModalLabel"
       var target_itemFL = button.data('sharefile');
       const blockText = document.getElementById("selected_target");
       if(!target_itemFL){
-        blockText.value="127.0.0.1:8000/home/sh/"+target_item;
-        copyLink.value="127.0.0.1:8000/home/sh/"+target_item;
+        blockText.value="15.165.244.243:8000/home/sh/"+target_item;
+        copyLink.value="15.165.244.243:8000/home/sh/"+target_item;
         blockText.style.display='None';
       }else{
-        blockText.value="127.0.0.1:8000/home/s/"+target_itemFL;
-        copyLink.value="127.0.0.1:8000/home/s/"+target_itemFL;
+        blockText.value="15.165.244.243:8000/home/s/"+target_itemFL;
+        copyLink.value="15.165.244.243:8000/home/s/"+target_itemFL;
         blockText.style.display='None';
       }
 
