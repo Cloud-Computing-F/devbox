@@ -92,9 +92,7 @@ def uploadFile(request, pk):
                         parent_id=pk if pk != 0 else None,
                     )
                     file.save()
-                    time.sleep(2)
-                    s3.upload_file(f'./media/UploadedFiles/{selected.name}',
-                                   get_bucket(request), str(file.uuid))
+                    s3.upload_fileobj(selected, get_bucket(request), str(file.uuid))
 
             elif len(selected) < 1:
                 print("업로드 할 파일을 선택해 주세요")
