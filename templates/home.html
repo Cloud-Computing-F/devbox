@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 {% load static %}
 <html lang="en">
@@ -364,30 +363,17 @@
                         <input type="textarea" id="copylink" style="width:500px"/>
                     </div>
                     <div class="modal-body">
-                    <h4>이메일/사용자</h4>
-                        <label
-                        ><input type="radio" name="mode" value="email" checked />email
-                        </label>
-                        <label
-                        ><input type="radio" name="mode" value="user" />user Id
-                        </label>
-                    </div>
-                    <div class="modal-footer">
-                        <form method="POST" action="{% url 'devbox:mailing'%}">
-                        <input name="email_address" id="email_address" type="email" multiple placeholder="이메일을 입력하세요" required>
+                    <h4>이메일 주소를 입력해보세요!</h4>
+                    <form method="POST" action="{% url 'devbox:mailing'%}">
+                        <input name="email_address" id="email_address" type="email" multiple placeholder="devbox@email.com" required>
                         {% csrf_token %}
                         <input type="textarea" id="selected_target" name="selected_target"/>
                         <button class="btn btn-primary" type="submit" id="sendEmailBTN" style="height: 40px; width: 140px; background-color: #90B4F7;">
-                        email로 보내기
+                        전송하기
                         </button>
-                        </form>
-                        <input name="to_user" id="to_user" type="textarea" placeholder="사용자를 입력하세요" required>
-                        <button class="btn btn-primary" type="submit" data-dismiss="modal" id='sendUserBTN'  style="height: 40px; width: 150px; background-color: #90B4F7;">
-                        사용자에게 보내기
-                        </button>
-                        <button type="button" class="btn btn-default" data-dismiss="modal">
-                        닫기
-                        </button>
+                     </form>
+                    </div>
+                    <div class="modal-footer">
                     </div>
                 </div>
             </div>
@@ -549,13 +535,7 @@
         // 모달 작성 부분 (수정 필요 없습니다!)
         let copyLink = document.getElementById("copylink");
         let emailAddress=document.getElementById("email_address");
-        let to_user = document.getElementById("to_user");
-        let sendUserBTN = document.getElementById("sendUserBTN");
         let sendEmailBTN = document.getElementById("sendEmailBTN");
-
-        sendUserBTN.style.display="None";
-        sendEmailBTN.style.display="Block";
-        to_user.style.display="None";
 
         $(document).ready(function(){
             $('#myModal').on('show.bs.modal',function(event){
@@ -572,22 +552,6 @@
                     copyLink.value="127.0.0.1:8000/s/"+target_itemFL;
                     blockText.style.display='None';
                 }
-
-                $("input[name='mode']").change(function(){
-                    if($(this).is(':checked')&&$(this).val()=='email'){
-                        emailAddress.style.display="Block";
-                        sendUserBTN.style.display="None";
-                        sendEmailBTN.style.display="Block";
-                        to_user.style.display="None";
-                    }
-                    if($(this).is(':checked')&&$(this).val()=='user'){
-                        emailAddress.style.display="None";
-                        sendEmailBTN.style.display="None";
-                        sendUserBTN.style.display="Block";
-                        to_user.style.display="Block";
-                    }
-                });
-
             })
         })
 
