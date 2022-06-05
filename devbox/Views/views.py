@@ -7,7 +7,6 @@ from devbox.models import Files, Folder, RecycleBins
 from contents.models import Bucket
 from .utilsViews import sort, download
 import boto3
-import time
 
 
 s3 = boto3.client('s3',
@@ -108,12 +107,12 @@ def downloadFile(request, pk):
 
         # 파일 다운로드
         if len(selected) >= 1:
-            return download(selected)
+            download(request, selected)
 
         # 파일 선택 안함 예외 처리
         elif len(selected) < 1:
             print("다운로드할 파일을 선택해 주세요")
-            return redirect("devbox:changeDirectory", pk)
+    return redirect("devbox:changeDirectory", pk)
 
 
 # 폴더 생성

@@ -1,6 +1,19 @@
 from django.shortcuts import render, redirect
 from devbox.models import Files, Folder, RecycleBins
 from .utilsViews import sort
+from django.conf import settings
+from contents.models import Bucket
+import boto3
+
+
+s3 = boto3.client('s3',
+                  aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+                  aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY)
+
+
+def get_bucket(request):
+    bucketName = Bucket.objects.get(userName=request.user).bucketName
+    return bucketName
 
 
 # Get parent folder name
@@ -21,7 +34,7 @@ def changeDirectoryInRecyclebin(request, pk):
     files = list(Files.objects.filter(parent_id=pk if pk != 0 else None).order_by("fileName"))
     folders = list(Folder.objects.filter(parent_id=pk if pk != 0 else None).order_by("folderName"))
 
-    return render(request, "devbox/recyclebin.html", context={
+    return render(request, "recyclebin.html", context={
         "current_folder_id": pk,
         "files": files,
         "folders": folders,
@@ -113,7 +126,8 @@ def permanentDelete(request, pk):
 
                 # 파일 삭제
                 for file_id in deleted_file_list:
-                    file = Files.objects.filter(id=file_id.id)
+                    file = Files.objects.filter(id=file_id.id)[0]
+                    s3.delete_object(Bucket=get_bucket(request), Key=str(file.uuid))
                     file.delete()
 
                 # 폴더 삭제
@@ -124,7 +138,8 @@ def permanentDelete(request, pk):
             # 선택한 파일 삭제
             if len(selected_file) >= 1:
                 for file_id in selected_file:
-                    file = Files.objects.filter(id=file_id)
+                    file = Files.objects.filter(id=file_id)[0]
+                    s3.delete_object(Bucket=get_bucket(request), Key=str(file.uuid))
                     file.delete()
 
     if pk == 0:

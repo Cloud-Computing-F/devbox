@@ -1,39 +1,53 @@
 from devbox.models import Files, Folder
+from contents.models import Bucket
 from django.db.models import Q
 from io import BytesIO
 from datetime import datetime
 import os
 import zipfile
 from django.http import FileResponse, HttpResponse
-from django.core.files.storage import FileSystemStorage
+from django.conf import settings
+import boto3
+import boto
+import boto.s3.connection
+import webbrowser
+
+
+s3 = boto3.client('s3',
+                  aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+                  aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY)
+
+
+def get_bucket(request):
+    bucketName = Bucket.objects.get(userName=request.user).bucketName
+    return bucketName
 
 
 # 다운로드 알고리즘
-def download(selected):
-    if len(selected) > 1:
-        zip_name = datetime.now()
-        zip_name = zip_name.strftime("%Y%m%d%H%M%S")
+def download(request, selected):
+    bucketName = get_bucket(request)
+    conn = boto.s3.connect_to_region(settings.AWS_REGION,
+                                     aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+                                     aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+                                     is_secure=True,
+                                     calling_format=boto.s3.connection.OrdinaryCallingFormat(),
+                                     )
+    bucket = conn.get_bucket(bucketName)
+    for i in range(len(selected)):
+        file = Files.objects.get(id=selected[i])
 
-        byte_data = BytesIO()
-        with zipfile.ZipFile(byte_data, 'w', compression=zipfile.ZIP_DEFLATED) as myzip:
-            for file_id in selected:
-                file = Files.objects.get(id=file_id)
-                file_path = os.path.basename(f"media/{file.uploadedFile}")
-                myzip.write(f"media/UploadedFiles/{file_path}", file.fileName)
+        aws_obj_key = bucket.get_key(str(file.uuid))
+        headers = {
+            'response-content-type': 'application/force-download',
+            'response-content-disposition': f'attachment;filename={file.fileName}'
+        }
 
-        response = HttpResponse(byte_data.getvalue(),content_type="application/force-download")
-        response['Content-Disposition'] = f'attachment; filename={zip_name}.zip'
-        response['Content-Length'] = byte_data.tell()
-        return response
-
-    # 파일 단일 선택 원본 파일 다운로드
-    elif len(selected) == 1:
-        file = Files.objects.get(id=selected[0])
-        file_path = os.path.basename(f"media/{file.uploadedFile}")
-        file_system = FileSystemStorage(os.path.abspath("media/UploadedFiles/"))
-        response = FileResponse(file_system.open(file_path), content_type='application/force-download')
-        response['Content-Disposition'] = f'attachment; filename="{file.fileName}"'
-        return response
+        url = aws_obj_key.generate_url(
+            response_headers=headers,
+            expires_in=600,
+        )
+        webbrowser.open(url)
+    return HttpResponse(url, status=200)
 
 
 # 검색 알고리즘
