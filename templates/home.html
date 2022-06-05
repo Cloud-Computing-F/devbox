@@ -37,7 +37,7 @@
     background:
     linear-gradient(135deg,#7780E0, #90B4F7, transparent);
     position: fixed;
-    width: 240px;
+    width: 17%;
     height: 100%;
     padding: 20px 0;
     float: left;
@@ -411,7 +411,13 @@
       background-color: #7780E0;
       display: block;
     }
-
+    .name-input {
+      margin-top: 8px;
+      font-size: 16px;
+      border: none;
+      border-bottom: 1px solid #7780E0;
+      width: 190px;
+    }
     .rename-input {
       margin-bottom: 20px;
       margin-top: 20px;
@@ -479,9 +485,7 @@
     }
 
     .btn-ok,
-    .btn-cancel,
-    .btn-share-cancel,
-    .btn-share-ok {
+    .btn-cancel {
       font-size: 12px;
       background-color: #7780E0;
       border: none;
@@ -492,18 +496,16 @@
       float: right;   
       margin-left: 7px;
     }
-    .btn-cancel,
-    .btn-share-cancel {
+    .btn-cancel {
       background-color: white;
       color: black;
       border: 1px solid #7780E0;
     }
     .btn-ok:focus,
-    .btn-cancel:focus,
-    .btn-share-cancel,
-    .btn-share-ok {
+    .btn-cancel:focus {
       outline: none;
     }
+
     </style>
     </head>
 
@@ -617,7 +619,7 @@
                       <div class="modal-body">
                       <form action="{% url 'devbox:renameFileAndFolder' current_folder_id %}" method="POST">
                       {% csrf_token %}
-                      <input class="rename-input" type="textarea" id="rename_item" name="selected_folder" placeholder="수정 전 이름"/>
+                      <input class="name-input" type="textarea" id="rename_item" name="selected_folder" placeholder="수정 전 이름"/>
                       <input class="rename-input" type="text" name="renameFileAndFolderName" placeholder="수정 후 이름">
                       <button class="btn-ok" type="submit">수정</button>
                       </form>
@@ -732,9 +734,9 @@
                         <table>
                             <tr>
                                 <th class="table-column-check">선택</th>
-                                <th class="table-column-name">파일 이름</th>
-                                <th class="table-column-date">업로드 날짜</th>
-                                <th class="table-column-size">파일 크기</th>
+                                <th class="table-column-name">파일 이름<i class="fas fa-arrow-down" style="margin-left: 4px;"></i></th>
+                                <th class="table-column-date">업로드 날짜<i class="fas fa-arrow-down" style="margin-left: 4px;"></i></th>
+                                <th class="table-column-size">파일 크기<i class="fas fa-arrow-down" style="margin-left: 4px;"></i></th>
                                 <th class="table-column-size">공유</th>
                             </tr>
 
@@ -781,100 +783,152 @@
     </body>
 
     <script>
-        const logout = document.getElementById("logout")
-        logout.addEventListener('click',()=>{
-          window.location.href="http://127.0.0.1:8000/apis/v1/users/logout/"
-          location.reload()
-        })
+      const logout = document.getElementById("logout")
+      logout.addEventListener('click',()=>{
+        window.location.href="http://127.0.0.1:8000/apis/v1/users/logout/"
+        location.reload()
+      })
 
-      
-  // 공유 모달 작성 부분 (수정 필요 없습니다!)
-  let copyLink = document.getElementById("copylink");
-  let emailAddress=document.getElementById("email_address");
-  let to_user = document.getElementById("to_user");
-  let sendUserBTN = document.getElementById("sendUserBTN");
-  let sendEmailBTN = document.getElementById("sendEmailBTN");
+      // 모달 작성 부분 (수정 필요 없습니다!)
+      let copyLink = document.getElementById("copylink");
+      let emailAddress=document.getElementById("email_address");
+      let to_user = document.getElementById("to_user");
+      let sendUserBTN = document.getElementById("sendUserBTN");
+      let sendEmailBTN = document.getElementById("sendEmailBTN");
 
-  sendUserBTN.style.display="None";
-  sendEmailBTN.style.display="Block";
-  to_user.style.display="None";
+      sendUserBTN.style.display="None";
+      sendEmailBTN.style.display="Block";
+      to_user.style.display="None";
 
-  $(document).ready(function(){
-    $('#myModal').on('show.bs.modal',function(event){
-      var button = $(event.relatedTarget)
-      var target_item = button.data('sharetarget');
-      var target_itemFL = button.data('sharefile');
-      const blockText = document.getElementById("selected_target");
-      if(!target_itemFL){
-        blockText.value="15.165.244.243:8000/home/sh/"+target_item;
-        copyLink.value="15.165.244.243:8000/home/sh/"+target_item;
-        blockText.style.display='None';
-      }else{
-        blockText.value="15.165.244.243:8000/home/s/"+target_itemFL;
-        copyLink.value="15.165.244.243:8000/home/s/"+target_itemFL;
-        blockText.style.display='None';
-      }
+      $(document).ready(function(){
+          $('#myModal').on('show.bs.modal',function(event){
+              var button = $(event.relatedTarget)
+              var target_item = button.data('sharetarget');
+              var target_itemFL = button.data('sharefile');
+              const blockText = document.getElementById("selected_target");
+              if(!target_itemFL){
+                  blockText.value="127.0.0.1:8000/sh/"+target_item;
+                  copyLink.value="127.0.0.1:8000/sh/"+target_item;
+                  blockText.style.display='None';
+              }else{
+                  blockText.value="127.0.0.1:8000/s/"+target_itemFL;
+                  copyLink.value="127.0.0.1:8000/s/"+target_itemFL;
+                  blockText.style.display='None';
+              }
 
-      $("input[name='mode']").change(function(){
-        if($(this).is(':checked')&&$(this).val()=='email'){
-          emailAddress.style.display="Block";
-          sendUserBTN.style.display="None";
-          sendEmailBTN.style.display="Block";
-          to_user.style.display="None";
-        }
-        if($(this).is(':checked')&&$(this).val()=='user'){
-          emailAddress.style.display="None";
-          sendEmailBTN.style.display="None";
-          sendUserBTN.style.display="Block";
-          to_user.style.display="Block";
-        }
+              $("input[name='mode']").change(function(){
+                  if($(this).is(':checked')&&$(this).val()=='email'){
+                      emailAddress.style.display="Block";
+                      sendUserBTN.style.display="None";
+                      sendEmailBTN.style.display="Block";
+                      to_user.style.display="None";
+                  }
+                  if($(this).is(':checked')&&$(this).val()=='user'){
+                      emailAddress.style.display="None";
+                      sendEmailBTN.style.display="None";
+                      sendUserBTN.style.display="Block";
+                      to_user.style.display="Block";
+                  }
+              });
+
+          })
+      })
+
+      // 수정 모달
+      $(document).ready(function(){
+          var editModal = $('#editModal')
+          $('#editModal').on('show.bs.modal',function(event){
+              var button = $(event.relatedTarget)
+              const blockText = document.getElementById("rename_item")
+
+              $('input:checkbox[name=selected_folder]').each(function (index) {
+                  if($(this).is(":checked")==true){
+                      console.log($(this).val());
+                      blockText.value = $(this).val();
+                      blockText.style.display="None"
+                  }
+              })
+          })
+      })
+
+      // 파일 업로드
+      $("#uploadFileButton").click(function() {
+          $("#uploadFile").click();
       });
 
-    })
-  })
-
-  // 수정 모달 
-
-  $(document).ready(function(){
-
-    var editModal = $('#editModal')
-    $('#editModal').on('show.bs.modal',function(event){
-      var button = $(event.relatedTarget)
-      const blockText = document.getElementById("rename_item")
-
-      $('input:checkbox[name=selected_folder]').each(function (index) {
-        if($(this).is(":checked")==true){
-            console.log($(this).val());
-            blockText.value = $(this).val();
-            blockText.style.display="None"
+      $("#uploadFile").change((event) => {
+          file = event.target.files[0];
+          var formData = new FormData();
+          formData.append("file", event.target.files[0]);
+          if ($(location).attr('pathname') !== "/home/") {
+              path = "../uploadFile/{{ current_folder_id }}/";
+          } else {
+              path = "uploadFile/{{ current_folder_id }}/";
           }
+
+          $.ajax({
+              url: path,
+              type: "POST",
+              data: formData,
+              processData: false,
+              contentType: false,
+              success: (data) => {
+                  alert("Upload Complete! Reload Website")
+              },
+          });
+      });
+
+      // 테이블 정렬
+      $('th').each(function (column) {
+          $(this).click(function() {
+              if($(this).is('.asc')) {
+                  $(this).removeClass('asc')
+                  $(this).addClass('desc');
+                  sortdir=-1;
+              } else {
+                  $(this).addClass('asc');
+                  $(this).removeClass('desc');
+                  sortdir=1;
+              }
+              $(this).siblings().removeClass('asc');
+              $(this).siblings().removeClass('desc');
+
+              const rec = $('table').find('tbody>tr').get();
+              rec.sort(function(a, b) {
+                  const var1 = $(a).children('td').eq(column).text().toUpperCase();
+                  const var2 = $(b).children('td').eq(column).text().toUpperCase();
+                  return (var1 < var2)?-sortdir : (var1 > var2)?sortdir:0;
+              });
+              $.each(rec, function(index, row) {
+                  $('tbody').append(row);
+              })
+          })
       })
-    })
-  })
 
+      // 다운로드
+      $("#downloadFile").click(function() {
+          const fileList = [];
+          $("input:checkbox[name=selected_file]:checked").each(function(){
+              const value = $(this).val();
+              fileList.push(value);
+          })
 
-        // 파일 업로드
-        $("#uploadFileButton").click(function() {
-            $("#uploadFile").click();
-        });
+          if ($(location).attr('pathname') !== "/home/") {
+              path = "../downloadFile/{{ current_folder_id }}/";
+          } else {
+              path = "downloadFile/{{ current_folder_id }}/";
+          }
 
-        $("#uploadFile").change((e) => {
-            files = e.target.files;
-            for(let i=0; i<files.length; i++) {
-                var formData = new FormData()
-                formData.append("file", files[i]);
-
-                $.ajax({
-                    url: "uploadFile/{{ current_folder_id }}/",
-                    type: "POST",
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: (data) => {
-                        alert("Upload Complete! Reload Website")
-                    },
-                });
-            }
-        });
-    </script>
+          $.ajax({
+              url: path,
+              type: "POST",
+              data: {"fileList": fileList},
+              processData: false,
+              contentType: false,
+              success: (data) => {
+                  alert("Download Complete! Reload Website")
+              },
+          })
+      })
+  </script>
 </html>
