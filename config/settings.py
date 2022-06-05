@@ -132,7 +132,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'devbox',
         'USER': 'devbox',
-        'PASSWORD': 'devboxpassword',
+        'PASSWORD': '',
         'HOST': 'devbox.c6uy40z5qfs0.ap-northeast-2.rds.amazonaws.com',
         'PORT': '3306',
     }
@@ -196,22 +196,22 @@ EMAIL_HOST = 'smtp.googlemail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'devbox0514@gmail.com'
-EMAIL_HOST_PASSWORD = 'cloudcom1052@'
+EMAIL_HOST_PASSWORD = ''
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 INTERNAL_IPS = ['127.0.0.1']
 
 # aws s3 연동
-AWS_REGION = env('AWS_REGION')
-AWS_STORAGE_BUCKET_NAME = env('AWS_STORAGE_BUCKET_NAME')
-AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY')
+AWS_REGION = 
+AWS_STORAGE_BUCKET_NAME = 
+AWS_ACCESS_KEY_ID = 
+AWS_SECRET_ACCESS_KEY = 
 
-AWS_QUERYSTRING_AUTH = False
-AWS_S3_HOST = 's3.%s.amazonaws.com' % AWS_REGION
-AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
+AWS_QUERYSTRING_AUTH = 
+AWS_S3_HOST = 
+AWS_S3_CUSTOM_DOMAIN = 
 
 # Media Setting(Media 파일이 프로젝트에서 업로드되는 파일의미)
-AWS_LOCATION='media'
-MEDIA_URL = "https://%s/%s/" % (AWS_S3_CUSTOM_DOMAIN, AWS_LOCATION)
-DEFAULT_FILE_STORAGE = 'config.media_storage.MediaStorage'
+AWS_LOCATION=
+MEDIA_URL = 
+DEFAULT_FILE_STORAGE = 
