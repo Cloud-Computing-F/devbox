@@ -10,8 +10,8 @@ from contents.views import HomeView, RelationView
 from apis.v1 import RelationCreateView
 from contents.models import Status
 
-admin.site.site_header = "Fastgram Admin"
-admin.site.site_title = "Fastgram Admin Site"
+admin.site.site_header = "DevBox Admin"
+admin.site.site_title = "DevBox Admin Site"
 admin.site.index_title = "Hello everyone:)"
 admin.site.register(Status)
 
