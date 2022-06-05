@@ -46,15 +46,15 @@
       text-align: center;
     }
 
-    .wrapper .sidebar .devbox .title {
+    .wrapper .sidebar .devbox .title{
       border: 0;
-      background-color: transparent;
+      background-color:transparent;
     }
 
-    .wrapper .sidebar .devbox .title .main_btn {
-      margin: 30px 5px 35px 0px;
-      width: 70%;
-      height: 75px;
+    .wrapper .sidebar .devbox .title .main_btn{
+      margin: 25px 5px 35px 0px;
+      width: 75%;
+      height: 80px;
     }
 
     .wrapper .sidebar ul li a {
@@ -343,11 +343,6 @@
           </a>
         </li>
         <li>
-          <a class="item active" href="{% url 'contents_relation' %}">
-            <span class="icon"><i class="fas fa-users"></i></span>팔로우
-          </a>
-        </li>
-        <li>
           <a class="item" href="{% url 'devbox:recyclebinDisplay' %}">
             <span class="icon"><i class="fas fa-trash"></i></span>휴지통
           </a>
@@ -360,6 +355,8 @@
     <div class="header">
       <div class="header_right">
         <span>{{ request.user }}님 안녕하세요!</span>
+        <a>&nbsp&nbsp&nbsp</a>
+        <a href="{% url 'contents_relation' %}">친구목록</a>
         <a>&nbsp&nbsp&nbsp</a>
         <a href="javascript:void(0);" id="logout">로그아웃</a>
       </div>
