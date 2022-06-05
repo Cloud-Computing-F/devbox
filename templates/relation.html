@@ -53,7 +53,7 @@
 
     .wrapper .sidebar .devbox .title .main_btn {
       margin: 30px 5px 35px 0px;
-      width: 180px;
+      width: 70%;
       height: 75px;
     }
 
@@ -248,7 +248,7 @@
       padding: 22px 30px 25px 30px;
     }
 
-    .title {
+    .title1 {
       font-size: 25px;
       font-family: "Noto Sans KR", sans-serif;
       font-weight: 550;
@@ -331,9 +331,8 @@
 <div class="wrapper">
   <div class="sidebar">
     <div class="devbox">
-      <a href="{% url 'contents_home' %}" class="title"><img class="main_btn"
-          src="{%static 'KakaoTalk_20220601_145619966_01.png' %}"></a>
-    </div>
+      <a href="{% url 'contents_home' %}" class="title"><img class="main_btn" src="{%static 'KakaoTalk_20220601_145619966_01.png' %}"></a>
+  </div>
 
     <div>
       <ul>
@@ -378,14 +377,14 @@
         </div>
         <div class="middle_right">
           <p><b id="searchResult"></b><span class="user-name" id="searchFollow" style="display: none;"><button
-                class="btn2"></button></span></p>
+            class="btn2"></button></span></p>
         </div>
       </div>
 
       <div class="bottom">
         <div class="bottom_left">
           <div class="left-box">
-            <h2 class="title">팔로워</h2>
+            <h2 class="title1">팔로워</h2>
             {% if followers %}
             <ul class="list-group">
               {% for obj in followers %}
@@ -400,7 +399,7 @@
         </div>
         <div class="bottom_right">
           <div class="right-box">
-            <h2 class="title">팔로잉</h2>
+            <h2 class="title1">팔로잉</h2>
             {% if followees %}
             <ul class="list-group">
               {% for user in followees %}
@@ -411,60 +410,60 @@
             {% endif %}
           </div>
 
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 
-          <script src="https://code.jquery.com/jquery-3.4.1.min.js"
-            integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+<script>
+  $(document).ready(function(){
+    $('#logout').click(function() {
+        $.get('/apis/v1/users/logout/', {}, function() {
+          location.reload();
+        });
+    });
+  
+    var followeesIds = {{ followees_ids }};
+    $('#search').click(function() {
+       var username = $('#searchUserName').val();
+       $.get("{% url 'apis_v1_user_get' %}", {username: username}, function(obj) {
+          $('#searchResult').html(obj.data.username);
+  
+          var $searchRelationButton = $('#searchFollow button');
+          $searchRelationButton.data('user-id', obj.data.id);
+          console.log(obj.data.id)
+          if (followeesIds.indexOf(obj.data.id) > -1) {
+              $searchRelationButton.removeClass('follow');
+              $searchRelationButton.addClass('unfollow');
+              $searchRelationButton.html('언팔로우');
+          } else {
+              $searchRelationButton.removeClass('unfollow');
+              $searchRelationButton.addClass('follow');
+              $searchRelationButton.html('팔로우');
+          }
+  
+          $('#searchFollow').show();
+       }).fail(function(data){
+          $('#searchResult').html(data.responseJSON.message);
+       });
+    });
+  
+    $('body').delegate('.follow', 'click', function(e) {
+      var userId = $(e.currentTarget).data('user-id');
+      $.post("{% url 'apis_v1_relation_create' %}", {id: userId}, function(){
+          location.reload();
+      }).fail(function(data) {
+          alert(data.responseJSON.message);
+      });
+    });
+  
+    $('body').delegate('.unfollow', 'click', function(e) {
+      var userId = $(e.currentTarget).data('user-id');
+      $.post("{% url 'apis_v1_relation_delete' %}", {id: userId}, function(){
+          location.reload();
+      }).fail(function(data) {
+          alert(data.responseJSON.message);
+      });
+    });
+  });
 
-
-          <script>
-            const logout = document.getElementById("logout")
-            logout.addEventListener('click',()=>{
-              window.location.href="http://127.0.0.1:8000/apis/v1/users/logout/"
-              location.reload()
-            })
-
-            $('#search').click(function () {
-              var username = $('#searchUserName').val();
-              $.get("{% url 'apis_v1_user_get' %}", { username: username }, function (obj) {
-                $('#searchResult').html(obj.data.username);
-
-                var $searchRelationButton = $('#searchFollow button');
-                $searchRelationButton.data('user-id', obj.data.id);
-                console.log(obj.data.id)
-                if (followeesIds.indexOf(obj.data.id) > -1) {
-                  $searchRelationButton.removeClass('follow');
-                  $searchRelationButton.addClass('unfollow');
-                  $searchRelationButton.html('언팔로우');
-                } else {
-                  $searchRelationButton.removeClass('unfollow');
-                  $searchRelationButton.addClass('follow');
-                  $searchRelationButton.html('팔로우');
-                }
-
-                $('#searchFollow').show();
-              }).fail(function (data) {
-                $('#searchResult').html(data.responseJSON.message);
-              });
-            });
-
-            $('body').delegate('.follow', 'click', function (e) {
-              var userId = $(e.currentTarget).data('user-id');
-              $.post("{% url 'apis_v1_relation_create' %}", { id: userId }, function () {
-                location.reload();
-              }).fail(function (data) {
-                alert(data.responseJSON.message);
-              });
-            });
-
-            $('body').delegate('.unfollow', 'click', function (e) {
-              var userId = $(e.currentTarget).data('user-id');
-              $.post("{% url 'apis_v1_relation_delete' %}", { id: userId }, function () {
-                location.reload();
-              }).fail(function (data) {
-                alert(data.responseJSON.message);
-              });
-            });
-});
-          </script>
-
-          {% endblock %}
+</script>
+{% endblock %}
