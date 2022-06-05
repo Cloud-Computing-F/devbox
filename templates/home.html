@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 {% load static %}
 <html lang="en">
@@ -133,7 +132,7 @@
     float: left;
     margin: 40px 100px -20px -365px;
     }
-    
+
     .root_font {
     margin-top: 50px;
     opacity: 0.8;
@@ -144,15 +143,15 @@
     a {
     color: #555BA1;
     text-decoration: none;
-    }   
-    
+    }
+
     .middle_right {
     float: right;
     margin-bottom: 10px;
     margin-top: 40px;
     margin-right: -265px;
     }
-    
+
     .search {
     width: 330px;
     height: 40px;
@@ -368,9 +367,9 @@
       padding: 40px;
     }
     .new-content {
-      margin-bottom: 20px;  
+      margin-bottom: 20px;
     }
-    
+
     .new-input {
       margin-bottom: 20px;
       margin-top: 20px;
@@ -493,7 +492,7 @@
       border-radius: 5px;
       width: 50px;
       height: 30px;
-      float: right;   
+      float: right;
       margin-left: 7px;
     }
     .btn-cancel {
@@ -559,9 +558,9 @@
         </div>
       </div>
       <!--모달 부분 끝 -->
-      
-      
-      
+
+
+
       <!--폴더 업로드 모달 시작-->
       <div
       class="modal fade"
@@ -595,8 +594,8 @@
       </div>
       </div>
       <!--폴더 업로드 모달 끝-->
-      
-      
+
+
               <!--수정 업로드 모달 시작-->
               <div
               class="modal fade"
@@ -714,15 +713,15 @@
 
                                 <!-- 수정 버튼 -->
                                 {% csrf_token%}
-                              
+
                                 <button type="button"
                                     class="btn"
                                     data-toggle="modal"
                                     data-target="#editModal"
-                                    
+
                                 >수정
                                 </button>
-              
+
                                 <!-- 삭제 -->
                                 <button class="btn" type="submit" formaction="{% url 'devbox:deleteFileAndFolder' current_folder_id %}">삭제</button>
                         </div>
@@ -732,48 +731,52 @@
                 <div class="table">
                     <div class="input_table">
                         <table>
-                            <tr>
-                                <th class="table-column-check">선택</th>
-                                <th class="table-column-name">파일 이름<i class="fas fa-arrow-down" style="margin-left: 4px;"></i></th>
-                                <th class="table-column-date">업로드 날짜<i class="fas fa-arrow-down" style="margin-left: 4px;"></i></th>
-                                <th class="table-column-size">파일 크기<i class="fas fa-arrow-down" style="margin-left: 4px;"></i></th>
-                                <th class="table-column-size">공유</th>
-                            </tr>
+                            <thead>
+                                <tr>
+                                    <th class="table-column-check">선택</th>
+                                    <th class="table-column-name">파일 이름<i class="fas fa-arrow-down" style="margin-left: 4px;"></i></th>
+                                    <th class="table-column-date">업로드 날짜</th>
+                                    <th class="table-column-size">파일 크기</th>
+                                    <th class="table-column-size">공유</th>
+                                </tr>
+                            </thead>
 
-                            {% for folder in folders %}
-                            <tr>
-                                <td><label><input type="checkbox" name="selected_folder" value="{{ folder.id }}"></label></td>
-                                <td><a href="{% url 'devbox:changeDirectory' folder.id %}">{{ folder.get_foldername }}</a></td>
-                                <td>{{ folder.dateTimeOfUpload }}</td>
-                                <td></td>
-                                <td><button type="button"
-                                    class="share_btn"
-                                    data-toggle="modal"
-                                    data-target="#myModal"
-                                    data-sharetarget="{{ folder.uuid }}"
-                                  >
-                                <i class="fas fa-share"></i>
-                                </button>
-                                </td>
-                            </tr>
-                            {% endfor %}
+                            <tbody>
+                                {% for folder in folders %}
+                                <tr>
+                                    <td><label><input type="checkbox" name="selected_folder" value="{{ folder.id }}"></label></td>
+                                    <td><a href="{% url 'devbox:changeDirectory' folder.id %}">{{ folder.get_foldername }}</a></td>
+                                    <td>{{ folder.dateTimeOfUpload }}</td>
+                                    <td></td>
+                                    <td><button type="button"
+                                        class="share_btn"
+                                        data-toggle="modal"
+                                        data-target="#myModal"
+                                        data-sharetarget="{{ folder.uuid }}"
+                                      >
+                                    <i class="fas fa-share"></i>
+                                    </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
 
-                            {% for file in files %}
-                            <tr>
-                                <td><label><input type="checkbox" name="selected_file" value="{{ file.id }}"></label></td>
-                                <td>{{ file.fileName }}</td>
-                                <td>{{ file.dateTimeOfUpload }}</td>
-                                <td>{{ file.fileSize|filesizeformat }}</td>
-                                <td><button type="button"
-                                    class="share_btn"
-                                    data-toggle="modal"
-                                    data-target="#myModal"
-                                    data-sharefile="{{ file.uuid }}">
-                                <i class="fas fa-share"></i>
-                                </button>
-                                </td>
-                            </tr>
-                            {% endfor %}
+                                {% for file in files %}
+                                <tr>
+                                    <td><label><input type="checkbox" name="selected_file" value="{{ file.id }}"></label></td>
+                                    <td>{{ file.fileName }}</td>
+                                    <td>{{ file.dateTimeOfUpload }}</td>
+                                    <td>{{ file.fileSize|filesizeformat }}</td>
+                                    <td><button type="button"
+                                        class="share_btn"
+                                        data-toggle="modal"
+                                        data-target="#myModal"
+                                        data-sharefile="{{ file.uuid }}">
+                                    <i class="fas fa-share"></i>
+                                    </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
                         </table>
                         </form>
                     </div>
@@ -836,20 +839,25 @@
 
       // 수정 모달
       $(document).ready(function(){
-          var editModal = $('#editModal')
-          $('#editModal').on('show.bs.modal',function(event){
-              var button = $(event.relatedTarget)
-              const blockText = document.getElementById("rename_item")
 
-              $('input:checkbox[name=selected_folder]').each(function (index) {
-                  if($(this).is(":checked")==true){
-                      console.log($(this).val());
-                      blockText.value = $(this).val();
-                      blockText.style.display="None"
-                  }
-              })
+        var editModal = $('#editModal')
+        $('#editModal').on('show.bs.modal',function(event){
+          var button = $(event.relatedTarget)
+          const blockText = document.getElementById("rename_item")
+
+          blockText.style.display="None"
+
+          $('input:checkbox[name=selected_folder]').each(function (index) {
+            if($(this).is(":checked")==true){
+                blockText.style.display="Block"
+                console.log($(this).val());
+                blockText.value = $(this).val();
+                blockText.style.display="None"
+              }
           })
+        })
       })
+
 
       // 파일 업로드
       $("#uploadFileButton").click(function() {
@@ -882,28 +890,29 @@
       $('th').each(function (column) {
           $(this).click(function() {
               if($(this).is('.asc')) {
-                  $(this).removeClass('asc')
+                  $(this).removeClass('asc');
                   $(this).addClass('desc');
-                  sortdir=-1;
+                  sortdir = -1;
               } else {
-                  $(this).addClass('asc');
-                  $(this).removeClass('desc');
-                  sortdir=1;
+                 $(this).addClass('asc');
+                 $(this).removeClass('desc');
+                 sortdir = 1;
               }
               $(this).siblings().removeClass('asc');
               $(this).siblings().removeClass('desc');
 
-              const rec = $('table').find('tbody>tr').get();
-              rec.sort(function(a, b) {
-                  const var1 = $(a).children('td').eq(column).text().toUpperCase();
-                  const var2 = $(b).children('td').eq(column).text().toUpperCase();
-                  return (var1 < var2)?-sortdir : (var1 > var2)?sortdir:0;
+              var rec = $('table').find('tbody > tr').get();
+              rec.sort(function (a, b) {
+                  var val1 = $(a).children('td').eq(column).text().toUpperCase();
+                  var val2 = $(b).children('td').eq(column).text().toUpperCase();
+                  return (val1 < val2)?-sortdir:(val1 > val2)?sortdir:0;
               });
               $.each(rec, function(index, row) {
                   $('tbody').append(row);
-              })
-          })
-      })
+               });
+          });
+      });
+
 
       // 다운로드
       $("#downloadFile").click(function() {

@@ -108,7 +108,7 @@
 
     .header {
       width: 99%;
-      margin-bottom: 90px;
+      margin-bottom: 70px;
       font-weight: 500;
       font-size: 14.5px;
       font-family: Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
@@ -142,7 +142,30 @@
       justify-content: space-between;
       align-items: center;
       width: 98%;
-      margin: 30px 20px 10px -20px;
+      margin:0px 20px -20px 10px;
+    }
+
+    .middle_left {
+    float: left;
+    margin: 10px 100px -5px -30px;
+    }
+
+    .root_font {
+    opacity: 0.8;
+    font-weight: 550;
+    font-size: 20px;
+    font-family: Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+    }
+    a {
+    color: #555BA1;
+    text-decoration: none;
+    }
+
+    .middle_right {
+    float: right;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    margin-right:  10px;
     }
 
     .btns {
@@ -190,7 +213,7 @@
       border-radius: 5px;
       box-shadow: 0px 0px 5px #cacaca;
       padding: 22px 30px 25px 30px;
-      margin: 10px 20px 10px -20px;
+      margin: 23px 20px 10px -20px;
       line-height: 35px;
     }
 
@@ -348,14 +371,23 @@
 
       <form method="POST">
         <div class="middle">
-          <div class="btns">
-            <!-- 복구 -->
-            {% csrf_token%}
-            <input type="submit" class="btn" value="복구" formaction="{% url 'devbox:restore' current_folder_id %}" />
-            <!-- 삭제 -->
-            {% csrf_token%}
-            <input type="submit" class="btn" value="영구삭제"
-              formaction="{% url 'devbox:permanentDelete' current_folder_id %}" />
+          <div class="middle_left root_font">
+            <!-- directory -->
+              <a href="{% url 'devbox:home' %}">root</a>
+              {% for p_folder in parentFolders %}
+              <span class="root_font">></span> <a href="{% url 'devbox:changeDirectory' p_folder.id %}"> {{p_folder.folderName}} </a>
+              {% endfor %}
+          </div>
+          <div class="middle_right">
+            <div class="btns">
+              <!-- 복구 -->
+              {% csrf_token%}
+              <input type="submit" class="btn" value="복구" formaction="{% url 'devbox:restore' current_folder_id %}" />
+              <!-- 삭제 -->
+              {% csrf_token%}
+              <input type="submit" class="btn" value="영구삭제"
+                formaction="{% url 'devbox:permanentDelete' current_folder_id %}" />
+            </div>
           </div>
         </div>
 
@@ -400,19 +432,11 @@
 </body>
 
 <script>
-
-  {% comment %} $('#logout').click(function () {
-    $.get('/apis/v1/users/logout/', {}, function () {
-      location.reload();
-    });
-  }); {% endcomment %}
-
-  const logout = document.getElementById("logout")
-
-  logout.addEventListener('click', () => {
-    window.location.href = "http://127.0.0.1:8000/apis/v1/users/logout/"
-    location.reload()
-  })
+      const logout = document.getElementById("logout")
+      logout.addEventListener('click',()=>{
+        window.location.href="http://127.0.0.1:8000/apis/v1/users/logout/"
+        location.reload()
+      })
 
 </script>
 

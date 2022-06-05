@@ -417,18 +417,12 @@
 
 
           <script>
+            const logout = document.getElementById("logout")
+            logout.addEventListener('click',()=>{
+              window.location.href="http://127.0.0.1:8000/apis/v1/users/logout/"
+              location.reload()
+            })
 
-            $(document).ready(function () {
-
-              $('#logout').click(function () {
-                $.get('/apis/v1/users/logout/', {}, function () {
-                  location.reload();
-                });
-              });
-
-
-              var followeesIds = {{ followees_ids }
-            };
             $('#search').click(function () {
               var username = $('#searchUserName').val();
               $.get("{% url 'apis_v1_user_get' %}", { username: username }, function (obj) {
